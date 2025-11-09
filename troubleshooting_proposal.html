@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proposal: User Troubleshooting Guide</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 20px;
+            background-color: #fdfdfd;
+        }
+        h1, h2, h3, h4 {
+            color: #2c3e50;
+            border-bottom: 1px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        code {
+            background-color: #ecf0f1;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: "Courier New", Courier, monospace;
+        }
+        pre {
+            background-color: #2c3e50;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .container {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .system-check {
+            font-family: sans-serif;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 600px;
+            margin: 20px 0;
+            background-color: #f9f9f9;
+        }
+        .system-check h3 {
+            margin-top: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .check-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+        }
+        .check-item span {
+            font-size: 1.5em;
+            margin-right: 12px;
+        }
+        .check-item .pass { color: #28a745; }
+        .check-item .fail { color: #dc3545; }
+        .check-item p { margin: 0; }
+    </style>
+</head>
+<body>
+
+    <h1>Proposal: Proactive User Troubleshooting Guide</h1>
+    <p>This document contains the complete proposal, including the pull request description and a functional prototype of the troubleshooting page.</p>
+
+    <div class="container">
+        <h2>1. Pull Request Description</h2>
+        <p>Below is the suggested text for the pull request to formally introduce this change.</p>
+        <hr>
+        <h4><strong>Title:</strong> <code>feat(docs): Add Proactive Troubleshooting and System Check Guide</code></h4>
+        <p><strong>Description:</strong></p>
+        <p>This pull request introduces a user-facing troubleshooting guide and a system requirements checklist. The goal is to reduce user frustration and lower support ticket volume by empowering users to solve common homepage loading issues themselves.</p>
+        <p><strong>Changes Proposed:</strong></p>
+        <ul>
+            <li><strong>New Troubleshooting Page:</strong> Creates a central page with a status check, quick fixes, and system requirements.</li>
+            <li><strong>Homepage Link:</strong> Adds a "Having Trouble Loading?" link on the homepage/login page to guide users to the new resource.</li>
+            <li><strong>System Check Tool:</strong> Implements a simple, client-side tool to give users immediate feedback on their browser's configuration.</li>
+        </ul>
+        <p><strong>Reasoning:</strong></p>
+        <ul>
+            <li><strong>Empowers Users:</strong> Allows users to solve their own problems quickly.</li>
+            <li><strong>Reduces Support Load:</strong> Frees up IT support to handle more complex issues.</li>
+            <li><strong>Improves User Experience:</strong> Reduces friction and makes the platform appear more reliable.</li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <h2>2. Functional Prototype of the Troubleshooting Page</h2>
+        <p>The following is a live, working model of the proposed troubleshooting page content and the system check tool.</p>
+        <hr>
+        
+        <!-- Start of Troubleshooting Page Content -->
+        <h1>Troubleshooting & Technical Support</h1>
+        <p>We're sorry you're having trouble accessing learn.WA. The good news is that most loading issues can be solved with a few quick steps. This guide will walk you through the most common solutions.</p>
+
+        <h3>Step 1: Is learn.WA Down?</h3>
+        <p>Before troubleshooting your own system, let's make sure the issue isn't on our end. Check our live status page (Note: This is a placeholder link).</p>
+        <p><strong>Live Status:</strong> <a href="#">status.learn.wa.gov</a></p>
+
+        <h3>Step 2: The 30-Second Quick Fix</h3>
+        <h4>A. Perform a "Hard Refresh"</h4>
+        <p>This forces your browser to load the absolute latest version of our website.</p>
+        <ul>
+            <li><strong>On Windows/Linux:</strong> Press <code>Ctrl + Shift + R</code></li>
+            <li><strong>On Mac:</strong> Press <code>Cmd + Shift + R</code></li>
+        </ul>
+
+        <h4>B. Clear Your Browser's Cache</h4>
+        <p>Old files stored by your browser can cause conflicts. After clearing the cache, close your browser completely and reopen it.</p>
+
+        <h3>Step 3: Check Your System and Browser</h3>
+        <p>Use our automatic system checker below to ensure your browser is configured correctly.</p>
+        
+        <!-- System Check Tool -->
+        <div class="system-check">
+            <h3>Automatic System Check</h3>
+            <div id="check-results"></div>
+        </div>
+        
+        <h3>Step 4: Verify Platform Requirements</h3>
+        <p>Ensure your setup meets our recommended standards for the best experience.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Requirement</th>
+                    <th>Recommended Specification</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Internet Connection</strong></td>
+                    <td>15+ Mbps (High-Speed Broadband)</td>
+                </tr>
+                <tr>
+                    <td><strong>Web Browser</strong></td>
+                    <td>Latest version of Chrome, Firefox, or Safari</td>
+                </tr>
+                <tr>
+                    <td><strong>JavaScript & Cookies</strong></td>
+                    <td>Must be enabled</td>
+                </tr>
+                <tr>
+                    <td><strong>Official URL</strong></td>
+                    <td>Ensure you are using the correct, up-to-date URL.</td>
+                </tr>
+                <tr>
+                    <td><strong>PDF Reader</strong></td>
+                    <td>Adobe Acrobat Reader (latest version) for documents.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Still Having Trouble?</h3>
+        <p>If you have completed all the steps above and the site is still not loading, please contact our IT support team with details about the steps you've tried and the device you are using.</p>
+        <!-- End of Troubleshooting Page Content -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const resultsContainer = document.getElementById('check-results');
+            let resultsHTML = '';
+
+            // 1. JavaScript Check
+            resultsHTML += `<div class="check-item"><span class="pass">✓</span><p><strong>JavaScript:</strong> Enabled</p></div>`;
+
+            // 2. Cookies Check
+            try {
+                document.cookie = "testcookie=1; SameSite=Lax";
+                const cookiesEnabled = document.cookie.indexOf("testcookie=") !== -1;
+                document.cookie = "testcookie=; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";
+                if (!cookiesEnabled) throw new Error("Cookies disabled");
+                resultsHTML += `<div class="check-item"><span class="pass">✓</span><p><strong>Cookies:</strong> Enabled</p></div>`;
+            } catch (e) {
+                resultsHTML += `<div class="check-item"><span class="fail">✗</span><p><strong>Cookies:</strong> Disabled. Please enable cookies in your browser settings.</p></div>`;
+            }
+
+            // 3. Browser Check
+            const ua = navigator.userAgent;
+            let browserName = "Unknown";
+            if (ua.includes("Firefox/")) browserName = "Firefox";
+            else if (ua.includes("Edg/")) browserName = "Microsoft Edge";
+            else if (ua.includes("Chrome/") && !ua.includes("Edg/")) browserName = "Google Chrome";
+            else if (ua.includes("Safari/") && !ua.includes("Chrome/")) browserName = "Apple Safari";
+            resultsHTML += `<div class="check-item"><span class="pass">✓</span><p><strong>Browser Detected:</strong> ${browserName}</p></div>`;
+
+            // 4. Online Status Check
+            if (navigator.onLine) {
+                resultsHTML += `<div class="check-item"><span class="pass">✓</span><p><strong>Internet Connection:</strong> Online</p></div>`;
+            } else {
+                resultsHTML += `<div class="check-item"><span class="fail">✗</span><p><strong>Internet Connection:</strong> Offline. Please check your network connection.</p></div>`;
+            }
+
+            resultsContainer.innerHTML = resultsHTML;
+        });
+    </script>
+
+</body>
+</html>
