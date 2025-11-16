@@ -2,7 +2,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "api": "python3 api/server.py",
+    "dev:full": "concurrently \"npm run dev\" \"npm run api\""
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.17",

@@ -1,32 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { getClasses, EnglishClass } from '../services/api';
 
 const CourseDiscoveryScreen = () => {
     const [view, setView] = useState('Path View');
+    const [courses, setCourses] = useState<EnglishClass[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    const courses = [
-        {
-            title: 'Foundations of Conversation',
-            description: 'Learn the essential phrases for everyday interactions.',
-            tags: ['Beginner', 'Speaking'],
-            progress: 100,
-            imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDJrzDB0Qy57K3fZTuGC43Go_Dcm1L8RdfOKlO2lKCswbPmND1yEvcCPCKBJ5nykEKWTLSNmkQJqmE-geWfoPD3RIg-0x-b8gYZ2uaOQzk9kpFdgwyqEoGVwVjT7HPtvUjn55mqCeyv1V_Qpg-XQFVzw_wGNHOD2uHNkWmTVcK0--8-kfRYhxo1Aab2lfRSCTMJrnP16fxJi7r16IojJtsOoa4Enz6q0YpFNizFGJvNyW_xjcR_MwZNaq0s_NJnTvRDRD7ndxxEKTg',
-        },
-        {
-            title: 'Mastering Business Presentations',
-            description: 'Confidently deliver impactful presentations in English.',
-            tags: ['Intermediate', 'Business'],
-            progress: 75,
-            imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD-oH-Qtdd3kPNbsFvazdrBaU-YIJE99wpOccR6w_BDwdm5iryOh9_yiqNtcjQMZ8POTup_-gAeu_vCZFCArR6cDFW5A3C4eULuMrY9SDKk2D5czRwdU4MDCvh7gR5FS4Axi8aaf2zr1igBnJjYI2sNoF4uuJhamoOnFCNjL2bkVEkbq70npO7j3kw4FUsRFFd8hjcZ8SVZuJX3abVbmfHs5zjhKB_skSBBkxlti9xzxUfidkImdja-7wbmZfGwH_1TYhiS6wgJTjk',
-        },
-        {
-            title: 'Advanced Sentence Structures',
-            description: 'Refine your writing and speaking with complex grammar.',
-            tags: ['Advanced', 'Grammar'],
-            progress: 0,
-            imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCNz078RVCviZ_SuHe4Sjxnz2hurniSiKTLuYszyfQGsTRRWBJ64XGNpsME06zqlS69TqcWwSMzqNU104oChE1XRcnJUQoKmFxPy8ibcpbVaw0Oq6XC1rDnxUS_aW90sdQuzFP55rOoTC-umYqgoOab22BNm790dm5qNXJgff7gSbtmrxYB44Z6f4OzpRIN8MDsp7oxGty_pQOrgoOS3o7-r1pM8y-_R-9mh1PxD_n-R05vIacGgkw9anuxhG3Gi8Yzk6IAemPtRBI',
-        },
-    ];
+    useEffect(() => {
+        const fetchCourses = async () => {
+            try {
+                setLoading(true);
+                const data = await getClasses();
+                setCourses(data);
+                setError(null);
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'Failed to load courses');
+                console.error('Error fetching courses:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCourses();
+    }, []);
 
     return (
         <div className="relative flex min-h-screen w-full flex-col bg-brand-off-white text-brand-dark-gray">
@@ -115,33 +113,71 @@ const CourseDiscoveryScreen = () => {
                     </div>
 
                     {/* Learning Path Visual */}
-                    <div className="relative flex flex-col items-center gap-8 pt-8">
-                        {/* Dashed line connector */}
-                        <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 border-l-2 border-dashed border-gray-300"></div>
-                        {courses.map((course, index) => (
-                            <div key={index} className="relative z-[1] flex w-full max-w-lg flex-col overflow-hidden rounded-xl bg-white shadow-lg transition-all hover:shadow-xl sm:flex-row">
-                                <div className="h-48 w-full bg-cover bg-center sm:h-auto sm:w-48" style={{ backgroundImage: `url('${course.imageUrl}')` }}></div>
-                                <div className="flex flex-1 flex-col p-6">
-                                    <div className="flex items-center gap-2">
-                                        {course.tags.map((tag, i) => (
-                                            <span key={i} className={`rounded-full px-2.5 py-1 text-xs font-semibold ${i === 0 ? 'bg-brand-teal/10 text-brand-teal' : 'bg-brand-coral/10 text-brand-coral'}`}>{tag}</span>
-                                        ))}
-                                    </div>
-                                    <h3 className="font-heading mt-3 text-lg font-semibold text-brand-dark-gray">{course.title}</h3>
-                                    <p className="mt-1 flex-grow text-sm text-gray-500">{course.description}</p>
-                                    <div className="mt-4">
-                                        <div className="h-2 w-full rounded-full bg-gray-200">
-                                            <div className="h-2 rounded-full bg-brand-teal" style={{ width: `${course.progress}%` }}></div>
-                                        </div>
-                                        <p className="mt-1 text-xs text-gray-400">{course.progress > 0 ? `${course.progress}% Complete` : 'Not started'}</p>
-                                    </div>
-                                    <button className={`mt-4 w-full rounded-lg py-2.5 text-sm font-bold transition-colors ${course.progress === 100 ? 'bg-brand-teal/10 text-brand-teal hover:bg-brand-teal/20' : 'bg-brand-teal text-white hover:bg-brand-teal/90'}`}>
-                                        {course.progress === 100 ? 'Review' : course.progress > 0 ? 'Continue' : 'Start'}
-                                    </button>
-                                </div>
+                    {loading ? (
+                        <div className="flex justify-center items-center py-12">
+                            <div className="text-center">
+                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-teal mx-auto"></div>
+                                <p className="mt-4 text-gray-500">Loading classes...</p>
                             </div>
-                        ))}
-                    </div>
+                        </div>
+                    ) : error ? (
+                        <div className="text-center py-12">
+                            <div className="text-red-500 mb-4">
+                                <span className="material-symbols-outlined text-5xl">error</span>
+                            </div>
+                            <p className="text-red-600 font-semibold">{error}</p>
+                            <p className="text-gray-500 mt-2">Make sure the API server is running on port 5000</p>
+                        </div>
+                    ) : courses.length === 0 ? (
+                        <div className="text-center py-12">
+                            <div className="text-gray-400 mb-4">
+                                <span className="material-symbols-outlined text-5xl">school</span>
+                            </div>
+                            <p className="text-gray-600 font-semibold">No classes available</p>
+                            <p className="text-gray-500 mt-2">Check back later for new courses</p>
+                        </div>
+                    ) : (
+                        <div className="relative flex flex-col items-center gap-8 pt-8">
+                            {/* Dashed line connector */}
+                            <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 border-l-2 border-dashed border-gray-300"></div>
+                            {courses.map((course, index) => (
+                                <div key={course.id} className="relative z-[1] flex w-full max-w-lg flex-col overflow-hidden rounded-xl bg-white shadow-lg transition-all hover:shadow-xl sm:flex-row">
+                                    <div className="h-48 w-full bg-gradient-to-br from-brand-teal to-brand-coral sm:h-auto sm:w-48 flex items-center justify-center">
+                                        <span className="material-symbols-outlined text-white text-6xl">school</span>
+                                    </div>
+                                    <div className="flex flex-1 flex-col p-6">
+                                        <div className="flex items-center gap-2">
+                                            <span className="rounded-full px-2.5 py-1 text-xs font-semibold bg-brand-teal/10 text-brand-teal">{course.level}</span>
+                                            <span className="rounded-full px-2.5 py-1 text-xs font-semibold bg-brand-coral/10 text-brand-coral">{course.days.length} days/week</span>
+                                        </div>
+                                        <h3 className="font-heading mt-3 text-lg font-semibold text-brand-dark-gray">{course.name}</h3>
+                                        <p className="mt-1 flex-grow text-sm text-gray-500">
+                                            Taught by {course.teacher} • {course.days.join(', ')} • {course.start_time} - {course.end_time}
+                                        </p>
+                                        <div className="mt-4">
+                                            <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                                <span>Enrolled: {course.enrolled}/{course.capacity}</span>
+                                                <span>{Math.round((course.enrolled / course.capacity) * 100)}%</span>
+                                            </div>
+                                            <div className="h-2 w-full rounded-full bg-gray-200">
+                                                <div className="h-2 rounded-full bg-brand-teal" style={{ width: `${(course.enrolled / course.capacity) * 100}%` }}></div>
+                                            </div>
+                                        </div>
+                                        <button 
+                                            className={`mt-4 w-full rounded-lg py-2.5 text-sm font-bold transition-colors ${
+                                                course.enrolled >= course.capacity 
+                                                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
+                                                    : 'bg-brand-teal text-white hover:bg-brand-teal/90'
+                                            }`}
+                                            disabled={course.enrolled >= course.capacity}
+                                        >
+                                            {course.enrolled >= course.capacity ? 'Class Full' : 'Enroll Now'}
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </main>
         </div>
