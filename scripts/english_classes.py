@@ -3,7 +3,7 @@ import re
 from dataclasses import dataclass, field
 from typing import List, Dict, Iterable, Optional, Union, Any
 
-VALID_LEVELS = {"Beginner", "Elementary", "Pre‑Intermediate", "Intermediate", "Upper‑Intermediate", "Advanced", "Proficient"}
+VALID_LEVELS = {"Beginner", "Elementary", "Pre-Intermediate", "Intermediate", "Upper-Intermediate", "Advanced", "Proficient"}
 VALID_DAYS = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"}
 
 @dataclass
