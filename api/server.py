@@ -1,28 +1,39 @@
 #!/usr/bin/env python3
 """
 Flask REST API for Learn.WA English Classes
-Provides endpoints for managing classes, students, and enrollments
+Provides endpoints for managing classes, students, and enrollments with SQLite persistence
 """
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import sys
 from pathlib import Path
+import json
 
-# Add scripts directory to path for imports
+# Add scripts and api directories to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
-from english_classes import EnglishClass, create_english_class, create_multiple_classes
+sys.path.insert(0, str(Path(__file__).parent))
+
+from english_classes import create_english_class, VALID_LEVELS
+from database import (
+    init_db, create_class as db_create_class, get_all_classes,
+    get_class_by_id, enroll_student, get_class_students
+)
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for frontend integration
+CORS(app)
 
-# In-memory storage (will be replaced with database)
-classes_db = {}
-next_class_id = 1
+# Initialize database on startup
+init_db()
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
     """Health check endpoint"""
-    return jsonify({"status": "ok", "message": "Learn.WA API is running"})
+    return jsonify({"status": "ok", "message": "Learn.WA API is running with SQLite"})
+
+@app.route('/api/levels', methods=['GET'])
+def get_levels():
+    """Get valid class levels"""
+    return jsonify({"levels": VALID_LEVELS})
 
 @app.route('/api/classes', methods=['GET'])
 def get_classes():
@@ -30,194 +41,159 @@ def get_classes():
     level = request.args.get('level')
     teacher = request.args.get('teacher')
     
-    result = list(classes_db.values())
-    
-    if level:
-        result = [c for c in result if c['level'] == level]
-    if teacher:
-        result = [c for c in result if c['teacher'].lower() == teacher.lower()]
-    
-    return jsonify(result)
+    classes = get_all_classes(level=level, teacher=teacher)
+    return jsonify(classes)
 
 @app.route('/api/classes/<int:class_id>', methods=['GET'])
 def get_class(class_id):
     """Get a specific class by ID"""
-    if class_id not in classes_db:
+    class_obj = get_class_by_id(class_id)
+    
+    if not class_obj:
         return jsonify({"error": "Class not found"}), 404
-    return jsonify(classes_db[class_id])
+    
+    return jsonify(class_obj)
 
 @app.route('/api/classes', methods=['POST'])
 def create_class():
     """Create a new class"""
-    global next_class_id
+    data = request.json
     
     try:
-        data = request.json
-        # Validate required fields
-        required_fields = ['name', 'level', 'teacher', 'days', 'start_time', 'end_time', 'capacity']
-        for field in required_fields:
-            if field not in data:
-                return jsonify({"error": f"Missing required field: {field}"}), 400
+        # Validate using the english_classes module
+        validated_class = create_english_class(
+            name=data['name'],
+            level=data['level'],
+            teacher=data['teacher'],
+            days=data['days'],
+            start_time=data['start_time'],
+            end_time=data['end_time'],
+            capacity=data.get('capacity', 20)
+        )
         
-        # Create EnglishClass instance for validation
-        english_class = create_english_class(**data)
+        # Save to database
+        class_id = db_create_class({
+            'name': validated_class.name,
+            'level': validated_class.level,
+            'teacher': validated_class.teacher,
+            'days': validated_class.days,
+            'start_time': validated_class.start_time,
+            'end_time': validated_class.end_time,
+            'capacity': validated_class.capacity
+        })
         
-        # Store as dict with ID
-        class_data = {
-            "id": next_class_id,
-            "name": english_class.name,
-            "level": english_class.level,
-            "teacher": english_class.teacher,
-            "days": english_class.days,
-            "start_time": english_class.start_time,
-            "end_time": english_class.end_time,
-            "capacity": english_class.capacity,
-            "syllabus": english_class.syllabus,
-            "students": english_class.students,
-            "enrolled": len(english_class.students)
-        }
+        # Return created class
+        new_class = get_class_by_id(class_id)
+        return jsonify(new_class), 201
         
-        classes_db[next_class_id] = class_data
-        next_class_id += 1
-        
-        return jsonify(class_data), 201
-    
-    except ValueError as e:
+    except (ValueError, KeyError) as e:
         return jsonify({"error": str(e)}), 400
-    except Exception as e:
-        return jsonify({"error": f"Server error: {str(e)}"}), 500
-
-@app.route('/api/classes/<int:class_id>/enroll', methods=['POST'])
-def enroll_student(class_id):
-    """Enroll a student in a class"""
-    if class_id not in classes_db:
-        return jsonify({"error": "Class not found"}), 404
-    
-    data = request.json
-    if not data or 'student_name' not in data:
-        return jsonify({"error": "Missing student_name"}), 400
-    
-    class_data = classes_db[class_id]
-    student_name = data['student_name']
-    
-    # Check capacity
-    if len(class_data['students']) >= class_data['capacity']:
-        return jsonify({"error": "Class is full", "capacity": class_data['capacity']}), 400
-    
-    # Check if already enrolled
-    if student_name in class_data['students']:
-        return jsonify({"error": "Student already enrolled"}), 400
-    
-    # Add student
-    class_data['students'].append(student_name)
-    class_data['enrolled'] = len(class_data['students'])
-    
-    return jsonify({
-        "message": "Student enrolled successfully",
-        "class": class_data
-    })
-
-@app.route('/api/classes/<int:class_id>/students', methods=['GET'])
-def get_class_students(class_id):
-    """Get all students enrolled in a class"""
-    if class_id not in classes_db:
-        return jsonify({"error": "Class not found"}), 404
-    
-    return jsonify({
-        "class_id": class_id,
-        "class_name": classes_db[class_id]['name'],
-        "students": classes_db[class_id]['students'],
-        "enrolled": len(classes_db[class_id]['students']),
-        "capacity": classes_db[class_id]['capacity']
-    })
-
-@app.route('/api/levels', methods=['GET'])
-def get_levels():
-    """Get all available class levels"""
-    from english_classes import VALID_LEVELS
-    return jsonify(list(VALID_LEVELS))
 
 @app.route('/api/classes/bulk', methods=['POST'])
 def bulk_create_classes():
-    """Create multiple classes from array"""
-    global next_class_id
+    """Create multiple classes at once"""
+    data = request.json
+    classes_data = data.get('classes', [])
+    
+    created_classes = []
+    
+    for class_data in classes_data:
+        try:
+            validated_class = create_english_class(
+                name=class_data['name'],
+                level=class_data['level'],
+                teacher=class_data['teacher'],
+                days=class_data['days'],
+                start_time=class_data['start_time'],
+                end_time=class_data['end_time'],
+                capacity=class_data.get('capacity', 20)
+            )
+            
+            class_id = db_create_class({
+                'name': validated_class.name,
+                'level': validated_class.level,
+                'teacher': validated_class.teacher,
+                'days': validated_class.days,
+                'start_time': validated_class.start_time,
+                'end_time': validated_class.end_time,
+                'capacity': validated_class.capacity
+            })
+            
+            new_class = get_class_by_id(class_id)
+            created_classes.append(new_class)
+            
+        except (ValueError, KeyError):
+            continue
+    
+    return jsonify({
+        "message": f"Created {len(created_classes)} classes",
+        "classes": created_classes
+    }), 201
+
+@app.route('/api/classes/<int:class_id>/enroll', methods=['POST'])
+def enroll_student_endpoint(class_id):
+    """Enroll a student in a class"""
+    data = request.json
+    student_name = data.get('student_name')
+    
+    if not student_name:
+        return jsonify({"error": "student_name is required"}), 400
     
     try:
-        data = request.json
-        if not isinstance(data, list):
-            return jsonify({"error": "Expected array of class specifications"}), 400
+        result = enroll_student(class_id, student_name)
         
-        created_classes = []
+        # Get updated class info
+        updated_class = get_class_by_id(class_id)
+        result['enrolled_count'] = updated_class['enrolled_count']
         
-        for spec in data:
-            try:
-                english_class = create_english_class(**spec)
-                class_data = {
-                    "id": next_class_id,
-                    "name": english_class.name,
-                    "level": english_class.level,
-                    "teacher": english_class.teacher,
-                    "days": english_class.days,
-                    "start_time": english_class.start_time,
-                    "end_time": english_class.end_time,
-                    "capacity": english_class.capacity,
-                    "syllabus": english_class.syllabus,
-                    "students": english_class.students,
-                    "enrolled": len(english_class.students)
-                }
-                classes_db[next_class_id] = class_data
-                created_classes.append(class_data)
-                next_class_id += 1
-            except ValueError as e:
-                return jsonify({"error": f"Invalid class specification: {str(e)}"}), 400
+        return jsonify(result), 200
         
-        return jsonify({
-            "message": f"Created {len(created_classes)} classes",
-            "classes": created_classes
-        }), 201
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+@app.route('/api/classes/<int:class_id>/students', methods=['GET'])
+def get_enrolled_students(class_id):
+    """Get all students enrolled in a class"""
+    class_obj = get_class_by_id(class_id)
     
-    except Exception as e:
-        return jsonify({"error": f"Server error: {str(e)}"}), 500
+    if not class_obj:
+        return jsonify({"error": "Class not found"}), 404
+    
+    students = get_class_students(class_id)
+    
+    return jsonify({
+        "class_id": class_id,
+        "enrolled_count": class_obj['enrolled_count'],
+        "students": students
+    })
 
 if __name__ == '__main__':
-    # Load initial classes from class_specs.json
-    import json
-    specs_path = Path(__file__).parent.parent / "scripts" / "class_specs.json"
-    
-    if specs_path.exists():
-        with open(specs_path, 'r', encoding='utf-8') as f:
-            specs = json.load(f)
-            for spec in specs:
+    # Load initial data from class_specs.json if database is empty
+    classes_list = get_all_classes()
+    if len(classes_list) == 0:
+        try:
+            specs_path = Path(__file__).parent.parent / 'scripts' / 'class_specs.json'
+            with open(specs_path, 'r') as f:
+                specs_data = json.load(f)
+                
+            for class_data in specs_data.get('classes', []):
                 try:
-                    english_class = create_english_class(**spec)
-                    class_data = {
-                        "id": next_class_id,
-                        "name": english_class.name,
-                        "level": english_class.level,
-                        "teacher": english_class.teacher,
-                        "days": english_class.days,
-                        "start_time": english_class.start_time,
-                        "end_time": english_class.end_time,
-                        "capacity": english_class.capacity,
-                        "syllabus": english_class.syllabus,
-                        "students": english_class.students,
-                        "enrolled": len(english_class.students)
-                    }
-                    classes_db[next_class_id] = class_data
-                    next_class_id += 1
-                    print(f"Loaded: {class_data['name']}")
-                except Exception as e:
-                    print(f"Failed to load class: {e}")
+                    validated_class = create_english_class(**class_data)
+                    db_create_class({
+                        'name': validated_class.name,
+                        'level': validated_class.level,
+                        'teacher': validated_class.teacher,
+                        'days': validated_class.days,
+                        'start_time': validated_class.start_time,
+                        'end_time': validated_class.end_time,
+                        'capacity': validated_class.capacity
+                    })
+                except ValueError:
+                    continue
+                    
+            print(f"Loaded initial data from class_specs.json")
+        except FileNotFoundError:
+            print("class_specs.json not found, starting with empty database")
     
-    print(f"\n🚀 API Server starting with {len(classes_db)} classes loaded")
-    print("📚 Available endpoints:")
-    print("  GET    /api/health")
-    print("  GET    /api/classes")
-    print("  GET    /api/classes/<id>")
-    print("  POST   /api/classes")
-    print("  POST   /api/classes/<id>/enroll")
-    print("  GET    /api/classes/<id>/students")
-    print("  GET    /api/levels")
-    print("  POST   /api/classes/bulk")
-    
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    print("Starting Learn.WA API server with SQLite database...")
+    app.run(debug=True, port=5000)

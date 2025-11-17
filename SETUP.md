@@ -174,7 +174,7 @@ lsof -ti:5173 | xargs kill -9
 - Check console for error messages
 
 ## Next Steps
-- [ ] Add SQLite database persistence
+- [x] Add SQLite database persistence
 - [ ] Implement user authentication
 - [ ] Add real-time updates with WebSockets
 - [ ] Deploy to production (Vercel + Heroku/Railway)
