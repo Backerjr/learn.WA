@@ -176,7 +176,7 @@ if __name__ == '__main__':
             with open(specs_path, 'r') as f:
                 specs_data = json.load(f)
                 
-            for class_data in specs_data.get('classes', []):
+            for class_data in specs_data:
                 try:
                     validated_class = create_english_class(**class_data)
                     db_create_class({
