@@ -7,6 +7,8 @@ import CoreLearningScreen from './screens/CoreLearningScreen';
 import UserProfileScreen from './screens/UserProfileScreen';
 import CourseDiscoveryScreen from './screens/CourseDiscoveryScreen';
 import ResourceLibraryScreen from './screens/ResourceLibraryScreen';
+import TeacherDashboardScreen from './screens/TeacherDashboardScreen';
+import CommunityScreen from './screens/CommunityScreen';
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -31,6 +33,8 @@ function App() {
               <Route path="/profile" element={<UserProfileScreen />} />
               <Route path="/courses" element={<CourseDiscoveryScreen />} />
               <Route path="/library" element={<ResourceLibraryScreen />} />
+              <Route path="/teacher" element={<TeacherDashboardScreen />} />
+              <Route path="/community" element={<CommunityScreen />} />
             </Routes>
           </Router>
         </div>

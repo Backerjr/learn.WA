@@ -36,6 +36,11 @@ const CoreLearningScreen = () => {
             options: ['Start', 'Beginning', 'Drawing board', 'First step'],
             correctAnswer: 'Drawing board',
         },
+        {
+            question: '5. When things are progressing smoothly, you can say everything is "running like ___."',
+            options: ['Clockwork', 'Water', 'Wind', 'Fire'],
+            correctAnswer: 'Clockwork',
+        },
     ];
 
     const handleNextStep = () => {

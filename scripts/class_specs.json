@@ -1,22 +1,7 @@
 [
   { "name": "Beginner Conversational", "level": "Beginner", "teacher": "Anna", "days": "Monday, Wednesday", "start_time": "09:00", "end_time": "10:30", "capacity": 12 },
   { "name": "Advanced Writing", "level": "Advanced", "teacher": "John", "days": ["Tuesday", "Thursday"], "start_time": "14:00", "end_time": "15:45", "capacity": 8 },
-  { "name": "Elementary Grammar Foundations", "level": "Elementary", "teacher": "Sarah", "days": "Monday, Wednesday, Friday", "start_time": "10:00", "end_time": "11:00", "capacity": 15 },
-  { "name": "Pre-Intermediate Speaking Practice", "level": "Pre-Intermediate", "teacher": "Michael", "days": ["Tuesday", "Thursday"], "start_time": "09:00", "end_time": "10:30", "capacity": 10 },
-  { "name": "Intermediate Business English", "level": "Intermediate", "teacher": "Emma", "days": "Monday, Wednesday", "start_time": "13:00", "end_time": "14:30", "capacity": 12 },
-  { "name": "Upper-Intermediate Academic Writing", "level": "Upper-Intermediate", "teacher": "David", "days": ["Tuesday", "Thursday"], "start_time": "15:00", "end_time": "16:30", "capacity": 10 },
-  { "name": "Proficient Discussion & Debate", "level": "Proficient", "teacher": "Jennifer", "days": "Wednesday, Friday", "start_time": "16:00", "end_time": "17:30", "capacity": 8 },
-  { "name": "Beginner Pronunciation Workshop", "level": "Beginner", "teacher": "Carlos", "days": "Saturday", "start_time": "10:00", "end_time": "12:00", "capacity": 15 },
-  { "name": "Elementary Reading Comprehension", "level": "Elementary", "teacher": "Lisa", "days": "Monday, Friday", "start_time": "11:30", "end_time": "13:00", "capacity": 12 },
-  { "name": "Pre-Intermediate Vocabulary Building", "level": "Pre-Intermediate", "teacher": "Robert", "days": ["Wednesday"], "start_time": "14:00", "end_time": "15:30", "capacity": 14 },
-  { "name": "Intermediate IELTS Preparation", "level": "Intermediate", "teacher": "Anna", "days": "Tuesday, Thursday", "start_time": "10:30", "end_time": "12:00", "capacity": 10 },
-  { "name": "Upper-Intermediate Professional Communication", "level": "Upper-Intermediate", "teacher": "John", "days": ["Monday", "Wednesday"], "start_time": "16:00", "end_time": "17:30", "capacity": 8 },
-  { "name": "Advanced Literary Analysis", "level": "Advanced", "teacher": "Sarah", "days": "Friday", "start_time": "13:00", "end_time": "15:00", "capacity": 6 },
-  { "name": "Proficient Technical Writing", "level": "Proficient", "teacher": "Michael", "days": ["Tuesday"], "start_time": "17:00", "end_time": "19:00", "capacity": 8 },
-  { "name": "Beginner Everyday English", "level": "Beginner", "teacher": "Emma", "days": "Tuesday, Thursday", "start_time": "08:00", "end_time": "09:30", "capacity": 16 },
-  { "name": "Elementary Listening Skills", "level": "Elementary", "teacher": "David", "days": "Wednesday, Friday", "start_time": "09:00", "end_time": "10:00", "capacity": 14 },
-  { "name": "Pre-Intermediate Travel English", "level": "Pre-Intermediate", "teacher": "Jennifer", "days": ["Saturday"], "start_time": "13:00", "end_time": "15:00", "capacity": 12 },
-  { "name": "Intermediate Presentation Skills", "level": "Intermediate", "teacher": "Carlos", "days": "Monday, Wednesday", "start_time": "15:00", "end_time": "16:30", "capacity": 10 },
-  { "name": "Upper-Intermediate TOEFL Preparation", "level": "Upper-Intermediate", "teacher": "Lisa", "days": ["Tuesday", "Thursday"], "start_time": "11:00", "end_time": "12:30", "capacity": 10 },
-  { "name": "Advanced Creative Writing", "level": "Advanced", "teacher": "Robert", "days": "Thursday", "start_time": "16:00", "end_time": "18:00", "capacity": 8 }
+  { "name": "Business Negotiation", "level": "Upper-Intermediate", "teacher": "Sarah", "days": "Friday", "start_time": "18:00", "end_time": "20:00", "capacity": 15 },
+  { "name": "IELTS Prep Bootcamp", "level": "Advanced", "teacher": "David", "days": "Saturday, Sunday", "start_time": "10:00", "end_time": "13:00", "capacity": 20 },
+  { "name": "Coffee & Chat", "level": "Pre-Intermediate", "teacher": "Emily", "days": "Wednesday", "start_time": "16:00", "end_time": "17:00", "capacity": 10 }
 ]
