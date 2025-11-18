@@ -1,44 +1,55 @@
 import React, { useState } from 'react';
+import { quizQuestions, QuizQuestion } from '@/mocks/quizQuestions';
 
 const QuizScreen = () => {
-  const [selectedOption, setSelectedOption] = useState<string | null>('Goes');
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState<null | 'correct' | 'incorrect'>(null);
+  const [score, setScore] = useState(0);
+  const [answeredQuestions, setAnsweredQuestions] = useState<number[]>([]);
 
-  const question = {
-    id: 1,
-    questionText: 'Choose the correct verb form to complete the sentence.',
-    sentence: 'She _______ to the store every morning.',
-    options: ['Go', 'Goes', 'Going', 'Gone'],
-    correctAnswer: 'Goes',
-  };
+  const question: QuizQuestion = quizQuestions[currentQuestionIndex];
+  const totalQuestions = quizQuestions.length;
+  const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
 
   const handleOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedOption(e.target.value);
   };
 
   const checkAnswer = () => {
-    if (selectedOption === question.correctAnswer) {
-      setShowFeedback('correct');
-    } else {
-      setShowFeedback('incorrect');
+    if (!selectedOption) return;
+    
+    const isCorrect = selectedOption === question.correctAnswer;
+    setShowFeedback(isCorrect ? 'correct' : 'incorrect');
+    
+    if (isCorrect && !answeredQuestions.includes(currentQuestionIndex)) {
+      setScore(score + 1);
+      setAnsweredQuestions([...answeredQuestions, currentQuestionIndex]);
     }
   };
 
   const skipQuestion = () => {
-    console.log("Question skipped");
-    setShowFeedback(null);
+    if (currentQuestionIndex < totalQuestions - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setSelectedOption(null);
+      setShowFeedback(null);
+    }
   };
 
   const nextQuestion = () => {
-    console.log("Next question");
-    setShowFeedback(null);
+    if (currentQuestionIndex < totalQuestions - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setSelectedOption(null);
+      setShowFeedback(null);
+    } else {
+      alert(`Quiz completed! Your score: ${score}/${totalQuestions}`);
+    }
   };
 
   return (
     <div className="font-display bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
       <div className="relative flex min-h-screen w-full flex-col items-center p-4 sm:p-6 md:p-8">
         <div className="w-full max-w-2xl">
-          {/* Header Bar */}
           <header className="mb-8 w-full">
             <div className="flex items-center justify-between gap-4">
               <button
@@ -49,24 +60,30 @@ const QuizScreen = () => {
               </button>
               <div className="flex-grow">
                 <div className="relative h-3 w-full overflow-hidden rounded-full bg-border-light dark:bg-border-dark">
-                  <div className="absolute left-0 top-0 h-full rounded-full bg-primary" style={{ width: '20%' }}></div>
+                  <div className="absolute left-0 top-0 h-full rounded-full bg-primary transition-all duration-300" style={{ width: `${progress}%` }}></div>
                 </div>
+              </div>
+              <div className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary">
+                Score: {score}/{totalQuestions}
               </div>
             </div>
           </header>
 
-          {/* Question Card */}
           <main className="flex flex-col">
             <div className="w-full rounded-xl bg-card-light dark:bg-card-dark p-6 sm:p-8 shadow-sm">
-              <span className="font-heading text-sm font-bold uppercase tracking-wider text-primary">
-                Question {question.id} of 10
-              </span>
+              <div className="flex items-center justify-between">
+                <span className="font-heading text-sm font-bold uppercase tracking-wider text-primary">
+                  Question {currentQuestionIndex + 1} of {totalQuestions}
+                </span>
+                <span className="text-xs font-medium px-3 py-1 rounded-full bg-primary/10 dark:bg-primary/20 text-primary">
+                  {question.difficulty}
+                </span>
+              </div>
               <h1 className="font-heading mt-2 text-2xl font-bold leading-tight text-text-light dark:text-text-dark sm:text-3xl">
                 {question.questionText}
               </h1>
               <p className="mt-4 text-lg text-text-light/80 dark:text-text-dark/80">{question.sentence}</p>
 
-              {/* Interactive Area: Multiple Choice */}
               <div className="mt-8 flex flex-col gap-3">
                 {question.options.map((option) => (
                   <label
@@ -80,6 +97,7 @@ const QuizScreen = () => {
                       value={option}
                       checked={selectedOption === option}
                       onChange={handleOptionChange}
+                      disabled={showFeedback !== null}
                     />
                     <span className="text-base font-medium">{option}</span>
                   </label>
@@ -87,46 +105,59 @@ const QuizScreen = () => {
               </div>
             </div>
 
-            {/* Action Bar */}
             <footer className="mt-8 flex w-full flex-col-reverse items-center justify-between gap-4 sm:flex-row">
-              <button onClick={skipQuestion} className="font-bold text-skip transition-colors hover:text-skip/80">Skip</button>
-              <button onClick={checkAnswer} className="w-full rounded-full bg-primary px-8 py-4 text-lg font-bold text-white shadow-lg shadow-primary/30 transition-transform duration-200 hover:scale-105 sm:w-auto">
+              <button 
+                onClick={skipQuestion} 
+                className="font-bold text-text-light-secondary dark:text-text-dark-secondary transition-colors hover:text-primary"
+                disabled={showFeedback !== null}
+              >
+                Skip
+              </button>
+              <button 
+                onClick={checkAnswer} 
+                className="w-full rounded-full bg-primary px-8 py-4 text-lg font-bold text-white shadow-lg shadow-primary/30 transition-transform duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
+                disabled={!selectedOption || showFeedback !== null}
+              >
                 Check Answer
               </button>
             </footer>
           </main>
 
-          {/* Feedback Overlay (Correct) */}
           {showFeedback === 'correct' && (
-            <div className="fixed inset-x-0 bottom-0 w-full bg-correct/10 p-4 backdrop-blur-sm dark:bg-correct/20 sm:p-6 md:p-8">
+            <div className="fixed inset-x-0 bottom-0 w-full bg-accent-green/10 p-4 backdrop-blur-sm dark:bg-accent-green/20 sm:p-6 md:p-8">
                 <div className="mx-auto flex max-w-2xl flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <div className="flex items-center gap-2">
-                            <span className="material-symbols-outlined text-2xl font-bold text-correct">check_circle</span>
-                            <h2 className="font-heading text-2xl font-bold text-correct">Correct!</h2>
+                            <span className="material-symbols-outlined text-2xl font-bold text-accent-green">check_circle</span>
+                            <h2 className="font-heading text-2xl font-bold text-accent-green">Correct!</h2>
                         </div>
-                        <p className="mt-1 text-text-light dark:text-text-dark">"{question.correctAnswer}" is the correct present tense form for a third-person singular subject like "She".</p>
+                        <p className="mt-1 text-text-light dark:text-text-dark">{question.explanation}</p>
                     </div>
-                    <button onClick={nextQuestion} className="w-full flex-shrink-0 rounded-full bg-correct px-8 py-3 font-bold text-white transition-transform duration-200 hover:scale-105 sm:w-auto">
-                        Next
+                    <button 
+                      onClick={nextQuestion} 
+                      className="w-full flex-shrink-0 rounded-full bg-accent-green px-8 py-3 font-bold text-white transition-transform duration-200 hover:scale-105 sm:w-auto"
+                    >
+                      {currentQuestionIndex < totalQuestions - 1 ? 'Next' : 'Finish'}
                     </button>
                 </div>
             </div>
           )}
 
-          {/* Feedback Overlay (Incorrect) */}
           {showFeedback === 'incorrect' && (
-             <div className="fixed inset-x-0 bottom-0 w-full bg-incorrect/10 p-4 backdrop-blur-sm dark:bg-incorrect/20 sm:p-6 md:p-8">
+             <div className="fixed inset-x-0 bottom-0 w-full bg-primary/10 p-4 backdrop-blur-sm dark:bg-primary/20 sm:p-6 md:p-8">
                 <div className="mx-auto flex max-w-2xl flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <div className="flex items-center gap-2">
-                            <span className="material-symbols-outlined text-2xl font-bold text-incorrect">cancel</span>
-                            <h2 className="font-heading text-2xl font-bold text-incorrect">Nice try!</h2>
+                            <span className="material-symbols-outlined text-2xl font-bold text-primary">cancel</span>
+                            <h2 className="font-heading text-2xl font-bold text-primary">Nice try!</h2>
                         </div>
-                        <p className="mt-1 text-text-light dark:text-text-dark">The correct answer is "{question.correctAnswer}". Use the "-es" ending for third-person singular subjects.</p>
+                        <p className="mt-1 text-text-light dark:text-text-dark">{question.explanation}</p>
                     </div>
-                    <button onClick={nextQuestion} className="w-full flex-shrink-0 rounded-full bg-incorrect px-8 py-3 font-bold text-white transition-transform duration-200 hover:scale-105 sm:w-auto">
-                        Next
+                    <button 
+                      onClick={nextQuestion} 
+                      className="w-full flex-shrink-0 rounded-full bg-primary px-8 py-3 font-bold text-white transition-transform duration-200 hover:scale-105 sm:w-auto"
+                    >
+                      {currentQuestionIndex < totalQuestions - 1 ? 'Next' : 'Finish'}
                     </button>
                 </div>
             </div>
