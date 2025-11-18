@@ -88,6 +88,10 @@ const MissionControlScreen = () => {
                                     <span className="material-symbols-outlined">school</span>
                                     <p className="text-sm font-medium">Teacher Mode</p>
                                 </Link>
+                                <Link to="/teacher/create" className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-primary/10 dark:hover:bg-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+                                    <span className="material-symbols-outlined fill">auto_awesome</span>
+                                    <p className="text-sm font-medium">AI Studio</p>
+                                </Link>
                             </div>
                         </div>
                         <div className="flex flex-col gap-4">
