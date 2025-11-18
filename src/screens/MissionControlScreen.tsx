@@ -80,6 +80,14 @@ const MissionControlScreen = () => {
                                     <span className="material-symbols-outlined">collections_bookmark</span>
                                     <p className="text-sm font-medium">Resources</p>
                                 </Link>
+                                <Link to="/community" className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-primary/10 dark:hover:bg-primary/20">
+                                    <span className="material-symbols-outlined">groups</span>
+                                    <p className="text-sm font-medium">Community</p>
+                                </Link>
+                                <Link to="/teacher" className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-primary/10 dark:hover:bg-primary/20">
+                                    <span className="material-symbols-outlined">school</span>
+                                    <p className="text-sm font-medium">Teacher Mode</p>
+                                </Link>
                             </div>
                         </div>
                         <div className="flex flex-col gap-4">
