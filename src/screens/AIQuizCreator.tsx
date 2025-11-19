@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { generateQuiz, validateQuizInput, GeneratedQuiz, FocusMode, DifficultyLevel } from '@/services/ai';
+import { createQuiz } from '@/services/api';
 
 /**
  * Context-Aware Assessment Engine
@@ -22,6 +23,7 @@ const AIQuizCreator: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [thinkingDots, setThinkingDots] = useState('');
   const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
+  const [editingOptionId, setEditingOptionId] = useState<string | null>(null);
   const [regeneratingId, setRegeneratingId] = useState<string | null>(null);
   const [showToast, setShowToast] = useState(false);
 
@@ -70,10 +72,30 @@ const AIQuizCreator: React.FC = () => {
     setEditingQuestionId(null);
   };
 
-  const handleSaveToLibrary = () => {
-    console.log('Saving to class library:', generatedQuiz);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+  const handleSaveToLibrary = async () => {
+    if (!generatedQuiz) return;
+    
+    try {
+      await createQuiz({
+        title: generatedQuiz.topic || 'Untitled Quiz',
+        topic: generatedQuiz.topic,
+        difficulty: generatedQuiz.metadata?.difficulty || difficulty,
+        focus_mode: generatedQuiz.metadata?.focusMode || focusMode,
+        metadata: generatedQuiz.metadata,
+        questions: generatedQuiz.questions.map(q => ({
+          question: q.question,
+          options: q.options,
+          correct_answer: q.options[q.correctAnswer],
+          explanation: q.explanation
+        }))
+      });
+      
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    } catch (err) {
+      console.error('Failed to save quiz:', err);
+      setError('Failed to save quiz. Please try again.');
+    }
   };
 
   const handleQuestionEdit = (questionId: string, newText: string) => {
@@ -86,6 +108,20 @@ const AIQuizCreator: React.FC = () => {
       )
     });
     setEditingQuestionId(null);
+  };
+
+  const handleOptionEdit = (questionId: string, optionIndex: number, newText: string) => {
+    if (!generatedQuiz) return;
+    
+    setGeneratedQuiz({
+      ...generatedQuiz,
+      questions: generatedQuiz.questions.map(q =>
+        q.id === questionId 
+          ? { ...q, options: q.options.map((opt, idx) => idx === optionIndex ? newText : opt) }
+          : q
+      )
+    });
+    setEditingOptionId(null);
   };
 
   const handleRegenerate = async (questionId: string) => {
@@ -351,24 +387,46 @@ const AIQuizCreator: React.FC = () => {
 
                   {/* Options */}
                   <div className="space-y-2">
-                    {question.options.map((option, optionIndex) => (
-                      <div
-                        key={optionIndex}
-                        className={`flex items-start gap-3 px-4 py-3 border ${
-                          optionIndex === question.correctAnswer
-                            ? 'border-primary bg-zinc-50 dark:bg-zinc-900'
-                            : 'border-zinc-200 dark:border-zinc-800'
-                        }`}
-                      >
-                        <span className="text-xs text-light-secondary dark:text-dark-secondary mt-1 font-mono">
-                          {String.fromCharCode(65 + optionIndex)}
-                        </span>
-                        <span className="flex-1 text-light-primary dark:text-dark-primary">{option}</span>
-                        {optionIndex === question.correctAnswer && (
-                          <span className="material-symbols-outlined text-primary text-base">check_circle</span>
-                        )}
-                      </div>
-                    ))}
+                    {question.options.map((option, optionIndex) => {
+                      const editKey = `${question.id}-${optionIndex}`;
+                      const isEditing = editingOptionId === editKey;
+                      
+                      return (
+                        <div
+                          key={optionIndex}
+                          className={`flex items-start gap-3 px-4 py-3 border ${
+                            optionIndex === question.correctAnswer
+                              ? 'border-primary bg-zinc-50 dark:bg-zinc-900'
+                              : 'border-zinc-200 dark:border-zinc-800'
+                          }`}
+                        >
+                          <span className="text-xs text-light-secondary dark:text-dark-secondary mt-1 font-mono">
+                            {String.fromCharCode(65 + optionIndex)}
+                          </span>
+                          {isEditing ? (
+                            <input
+                              type="text"
+                              value={option}
+                              onChange={(e) => handleOptionEdit(question.id, optionIndex, e.target.value)}
+                              onBlur={() => setEditingOptionId(null)}
+                              onKeyDown={(e) => e.key === 'Enter' && setEditingOptionId(null)}
+                              className="flex-1 px-2 py-1 border border-primary bg-white dark:bg-zinc-950 text-light-primary dark:text-dark-primary outline-none"
+                              autoFocus
+                            />
+                          ) : (
+                            <span 
+                              onClick={() => setEditingOptionId(editKey)}
+                              className="flex-1 text-light-primary dark:text-dark-primary cursor-text hover:bg-zinc-100 dark:hover:bg-zinc-800 px-2 py-1 -mx-2 -my-1 transition-colors"
+                            >
+                              {option}
+                            </span>
+                          )}
+                          {optionIndex === question.correctAnswer && (
+                            <span className="material-symbols-outlined text-primary text-base">check_circle</span>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
 
                   {/* Explanation */}

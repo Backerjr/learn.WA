@@ -16,7 +16,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 from english_classes import create_english_class, VALID_LEVELS
 from database import (
     init_db, create_class as db_create_class, get_all_classes,
-    get_class_by_id, enroll_student, get_class_students
+    get_class_by_id, enroll_student, get_class_students,
+    create_quiz, get_all_quizzes, get_quiz
 )
 
 app = Flask(__name__)
@@ -166,6 +167,34 @@ def get_enrolled_students(class_id):
         "enrolled_count": class_obj['enrolled_count'],
         "students": students
     })
+
+@app.route('/api/quizzes', methods=['POST'])
+def create_quiz_endpoint():
+    """Create a new quiz"""
+    data = request.json
+    
+    try:
+        quiz_id = create_quiz(data)
+        new_quiz = get_quiz(quiz_id)
+        return jsonify(new_quiz), 201
+    except (ValueError, KeyError) as e:
+        return jsonify({"error": str(e)}), 400
+
+@app.route('/api/quizzes', methods=['GET'])
+def get_quizzes():
+    """Get all quizzes"""
+    quizzes = get_all_quizzes()
+    return jsonify(quizzes)
+
+@app.route('/api/quizzes/<int:quiz_id>', methods=['GET'])
+def get_quiz_endpoint(quiz_id):
+    """Get a specific quiz with questions"""
+    quiz = get_quiz(quiz_id)
+    
+    if not quiz:
+        return jsonify({"error": "Quiz not found"}), 404
+    
+    return jsonify(quiz)
 
 if __name__ == '__main__':
     # Load initial data from class_specs.json if database is empty

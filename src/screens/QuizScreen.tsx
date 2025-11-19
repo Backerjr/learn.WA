@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { quizQuestions, QuizQuestion } from '@/mocks/quizQuestions';
 
 const QuizScreen = () => {
@@ -7,6 +8,12 @@ const QuizScreen = () => {
   const [showFeedback, setShowFeedback] = useState<null | 'correct' | 'incorrect'>(null);
   const [score, setScore] = useState(0);
   const [answeredQuestions, setAnsweredQuestions] = useState<number[]>([]);
+
+  useEffect(() => {
+    setCurrentQuestionIndex(0);
+    setSelectedOption(null);
+    setShowFeedback(null);
+  }, []);
 
   const question: QuizQuestion = quizQuestions[currentQuestionIndex];
   const totalQuestions = quizQuestions.length;
@@ -52,12 +59,13 @@ const QuizScreen = () => {
         <div className="w-full max-w-2xl">
           <header className="mb-8 w-full">
             <div className="flex items-center justify-between gap-4">
-              <button
+              <Link
+                to="/"
                 aria-label="Exit Quiz"
                 className="flex items-center justify-center rounded-full border border-border-light dark:border-border-dark p-2 text-light-primary/80 hover:bg-border-light dark:text-dark-primary/80 dark:hover:bg-border-dark"
               >
                 <span className="material-symbols-outlined text-2xl">close</span>
-              </button>
+              </Link>
               <div className="flex-grow">
                 <div className="relative h-3 w-full overflow-hidden rounded-full bg-border-light dark:bg-border-dark">
                   <div className="absolute left-0 top-0 h-full rounded-full bg-primary transition-all duration-300" style={{ width: `${progress}%` }}></div>
