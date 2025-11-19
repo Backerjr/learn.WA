@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useLearning } from '@/contexts/LearningContext';
 
 const CoreLearningScreen = () => {
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-    const [currentStepIndex, setCurrentStepIndex] = useState(2);
-    const { lessons, userProfile } = useLearning();
 
     const lessonSteps = [
         { name: 'Introduction', status: currentStepIndex > 0 ? 'completed' : currentStepIndex === 0 ? 'active' : 'pending' },
