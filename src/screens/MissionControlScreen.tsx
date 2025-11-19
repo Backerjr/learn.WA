@@ -88,9 +88,17 @@ const MissionControlScreen = () => {
                                     <span className="material-symbols-outlined">school</span>
                                     <p className="text-sm font-medium">Teacher Mode</p>
                                 </Link>
-                                <Link to="/teacher/create" className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-primary/10 dark:hover:bg-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+                                <Link to="/teacher/create" className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-primary/10 dark:hover:bg-primary/20">
+                                    <span className="material-symbols-outlined">edit_note</span>
+                                    <p className="text-sm font-medium">Assessment Engine</p>
+                                </Link>
+                                <Link to="/studio" className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-primary/10 dark:hover:bg-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
                                     <span className="material-symbols-outlined fill">auto_awesome</span>
-                                    <p className="text-sm font-medium">AI Studio</p>
+                                    <p className="text-sm font-medium">The Studio</p>
+                                </Link>
+                                <Link to="/quiz-library" className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-primary/10 dark:hover:bg-primary/20">
+                                    <span className="material-symbols-outlined">collections_bookmark</span>
+                                    <p className="text-sm font-medium">Quiz Library</p>
                                 </Link>
                             </div>
                         </div>

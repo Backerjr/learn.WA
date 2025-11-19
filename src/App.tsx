@@ -10,6 +10,8 @@ import ResourceLibraryScreen from './screens/ResourceLibraryScreen';
 import TeacherDashboardScreen from './screens/TeacherDashboardScreen';
 import CommunityScreen from './screens/CommunityScreen';
 import AIQuizCreator from './screens/AIQuizCreator';
+import AssessmentStudio from './screens/AssessmentStudio';
+import QuizLibrary from './screens/QuizLibrary';
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -37,6 +39,8 @@ function App() {
               <Route path="/teacher" element={<TeacherDashboardScreen />} />
               <Route path="/community" element={<CommunityScreen />} />
               <Route path="/teacher/create" element={<AIQuizCreator />} />
+              <Route path="/studio" element={<AssessmentStudio />} />
+              <Route path="/quiz-library" element={<QuizLibrary />} />
             </Routes>
           </Router>
         </div>

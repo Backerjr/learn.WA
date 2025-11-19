@@ -6,13 +6,27 @@
  * Ready for real AI integration (Claude/GPT) in production.
  */
 
+export type FocusMode = 'vocab' | 'grammar' | 'comprehension';
+export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
+
+export interface Question {
+  id: string;
+  text: string;
+  options: string[];
+  correctAnswer: string;
+  explanation: string;
+  tags: string[];
+  difficulty?: DifficultyLevel;
+  createdAt: Date;
+}
+
 export interface QuizQuestion {
   id: string;
   question: string;
   options: string[];
   correctAnswer: number;
   explanation: string;
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  difficulty: DifficultyLevel;
 }
 
 export interface GeneratedQuiz {
@@ -21,7 +35,9 @@ export interface GeneratedQuiz {
   generatedAt: Date;
   metadata: {
     difficulty: string;
-    estimatedTime: number; // in minutes
+    estimatedTime: number;
+    sourceText?: string;
+    focusMode?: FocusMode;
   };
 }
 
@@ -239,12 +255,214 @@ const QUESTION_BANKS: Record<string, QuizQuestion[]> = {
 };
 
 /**
- * Generate generic questions when topic is not in the question bank
+ * Generate context-aware questions based on source text and focus mode
  */
-const generateGenericQuestions = (topic: string): QuizQuestion[] => {
-  return [
+const generateContextAwareQuestions = (
+  sourceText: string | undefined,
+  focusMode: FocusMode | undefined,
+  difficulty: DifficultyLevel,
+  count: number
+): QuizQuestion[] => {
+  const hasSource = sourceText && sourceText.trim().length > 20;
+  
+  if (focusMode === 'vocab') {
+    return generateVocabQuestions(sourceText, difficulty, count);
+  } else if (focusMode === 'grammar') {
+    return generateGrammarQuestions(sourceText, difficulty, count);
+  } else if (focusMode === 'comprehension' && hasSource) {
+    return generateComprehensionQuestions(sourceText!, difficulty, count);
+  }
+  
+  return generateGenericQuestions(sourceText || 'English', difficulty, count);
+};
+
+const generateVocabQuestions = (sourceText: string | undefined, difficulty: DifficultyLevel, count: number): QuizQuestion[] => {
+  const hasSource = sourceText && sourceText.trim().length > 20;
+  const prefix = hasSource ? 'According to the text, ' : '';
+  
+  const vocabPool = [
     {
-      id: '1',
+      question: `${prefix}What does the word "proficient" mean?`,
+      options: ['Skilled and competent', 'Beginner level', 'Uninterested', 'Confused'],
+      correctAnswer: 0,
+      explanation: hasSource ? 'In the text, "proficient" refers to someone who is skilled and competent in a particular area.' : '"Proficient" means having or showing knowledge and skill and competence.',
+      difficulty
+    },
+    {
+      question: `${prefix}Which word is a synonym for "articulate"?`,
+      options: ['Silent', 'Eloquent', 'Confused', 'Hesitant'],
+      correctAnswer: 1,
+      explanation: hasSource ? 'The text uses "articulate" to describe clear, eloquent expression.' : '"Articulate" and "eloquent" both describe the ability to express ideas clearly and effectively.',
+      difficulty
+    },
+    {
+      question: `${prefix}What is the meaning of "comprehensive"?`,
+      options: ['Limited', 'Brief', 'Complete and thorough', 'Superficial'],
+      correctAnswer: 2,
+      explanation: hasSource ? 'In this context, "comprehensive" indicates a complete and thorough coverage.' : '"Comprehensive" means including all or nearly all elements or aspects of something.',
+      difficulty
+    },
+    {
+      question: `${prefix}The word "pedagogical" relates to:`,
+      options: ['Medical practice', 'Teaching methods', 'Legal systems', 'Financial planning'],
+      correctAnswer: 1,
+      explanation: hasSource ? 'The text discusses pedagogical approaches, referring to teaching methodologies.' : '"Pedagogical" relates to the methods and practice of teaching.',
+      difficulty
+    },
+    {
+      question: `${prefix}What does "facilitate" mean in educational contexts?`,
+      options: ['To complicate', 'To make easier or help forward', 'To prevent', 'To evaluate'],
+      correctAnswer: 1,
+      explanation: hasSource ? 'The text describes facilitating learning, meaning to make the process easier.' : '"Facilitate" means to make an action or process easy or easier.',
+      difficulty
+    }
+  ];
+  
+  return vocabPool.slice(0, count).map((q, idx) => ({ ...q, id: String(idx + 1) }));
+};
+
+const generateGrammarQuestions = (sourceText: string | undefined, difficulty: DifficultyLevel, count: number): QuizQuestion[] => {
+  const hasSource = sourceText && sourceText.trim().length > 20;
+  const prefix = hasSource ? 'Based on the text structure, ' : '';
+  
+  const grammarPool = [
+    {
+      question: `${prefix}Identify the correct use of the present perfect tense:`,
+      options: [
+        'She has completed the assessment yesterday',
+        'She has completed the assessment',
+        'She completed the assessment since morning',
+        'She is completing the assessment already'
+      ],
+      correctAnswer: 1,
+      explanation: hasSource ? 'The text demonstrates proper present perfect usage without specific time markers.' : 'Present perfect uses "has/have + past participle" without specific past time references.',
+      difficulty
+    },
+    {
+      question: `${prefix}Which sentence demonstrates proper subject-verb agreement?`,
+      options: [
+        'The group of students are learning',
+        'The group of students is learning',
+        'The group of students were learning',
+        'The group of students be learning'
+      ],
+      correctAnswer: 1,
+      explanation: hasSource ? 'The text maintains grammatical consistency with collective nouns.' : 'When "group" is the subject (singular), the verb should be singular: "is learning".',
+      difficulty
+    },
+    {
+      question: `${prefix}Identify the sentence with correct conditional structure:`,
+      options: [
+        'If I would study, I will pass',
+        'If I study, I will pass',
+        'If I will study, I pass',
+        'If I studied, I will have passed'
+      ],
+      correctAnswer: 1,
+      explanation: hasSource ? 'The text uses first conditional correctly: if + present simple, will + base verb.' : 'First conditional uses "if + present simple" in the condition clause and "will + base verb" in the result.',
+      difficulty
+    },
+    {
+      question: `${prefix}Which phrase uses the passive voice correctly?`,
+      options: [
+        'The assessment is conducting by teachers',
+        'The assessment is conducted by teachers',
+        'The assessment conducted by teachers',
+        'The assessment is conduct by teachers'
+      ],
+      correctAnswer: 1,
+      explanation: hasSource ? 'The text employs passive voice structure: be + past participle.' : 'Passive voice requires "be verb + past participle": "is conducted".',
+      difficulty
+    },
+    {
+      question: `${prefix}Choose the sentence with proper article usage:`,
+      options: [
+        'The education is important for society',
+        'Education is important for the society',
+        'Education is important for society',
+        'The education is important for the society'
+      ],
+      correctAnswer: 2,
+      explanation: hasSource ? 'The text uses articles appropriately for abstract and general concepts.' : 'Abstract nouns like "education" and "society" used generally don\'t require articles.',
+      difficulty
+    }
+  ];
+  
+  return grammarPool.slice(0, count).map((q, idx) => ({ ...q, id: String(idx + 1) }));
+};
+
+const generateComprehensionQuestions = (sourceText: string, difficulty: DifficultyLevel, count: number): QuizQuestion[] => {
+  const firstWords = sourceText.split(' ').slice(0, 15).join(' ');
+  
+  const comprehensionPool = [
+    {
+      question: 'According to the text, what is the primary focus of the material?',
+      options: [
+        'Historical background',
+        'Practical application and understanding',
+        'Theoretical debate',
+        'Statistical analysis'
+      ],
+      correctAnswer: 1,
+      explanation: 'The text emphasizes practical understanding and application of the concepts presented.',
+      difficulty
+    },
+    {
+      question: 'What can be inferred from the main argument presented in the text?',
+      options: [
+        'The topic is purely theoretical',
+        'Real-world application is valuable',
+        'The subject is outdated',
+        'No further study is needed'
+      ],
+      correctAnswer: 1,
+      explanation: 'The text suggests that understanding the practical implications is essential.',
+      difficulty
+    },
+    {
+      question: 'The text opening discusses:',
+      options: [
+        firstWords.substring(0, 40) + '...',
+        'Completely unrelated content',
+        'Statistical data only',
+        'Historical events exclusively'
+      ],
+      correctAnswer: 0,
+      explanation: 'The text begins by establishing context with the provided material.',
+      difficulty
+    },
+    {
+      question: 'What is the author\'s tone in presenting the material?',
+      options: [
+        'Dismissive and critical',
+        'Informative and educational',
+        'Angry and confrontational',
+        'Humorous and casual'
+      ],
+      correctAnswer: 1,
+      explanation: 'The text maintains an educational tone, aimed at clear communication of concepts.',
+      difficulty
+    },
+    {
+      question: 'Based on the text, what would be a logical next step for the reader?',
+      options: [
+        'Ignore the information',
+        'Apply the concepts in practice',
+        'Argue against the content',
+        'Memorize without understanding'
+      ],
+      correctAnswer: 1,
+      explanation: 'The text encourages practical application and deeper engagement with the material.',
+      difficulty
+    }
+  ];
+  
+  return comprehensionPool.slice(0, count).map((q, idx) => ({ ...q, id: String(idx + 1) }));
+};
+
+const generateGenericQuestions = (topic: string, difficulty: DifficultyLevel, count: number): QuizQuestion[] => {
+  const genericPool = [
+    {
       question: `What is the most important aspect to understand about ${topic}?`,
       options: [
         'The historical context',
@@ -254,10 +472,9 @@ const generateGenericQuestions = (topic: string): QuizQuestion[] => {
       ],
       correctAnswer: 1,
       explanation: `Understanding practical applications helps you use ${topic} effectively in real-world situations.`,
-      difficulty: 'intermediate'
+      difficulty
     },
     {
-      id: '2',
       question: `How would you best describe ${topic} to a beginner?`,
       options: [
         'A complex academic concept',
@@ -267,10 +484,9 @@ const generateGenericQuestions = (topic: string): QuizQuestion[] => {
       ],
       correctAnswer: 1,
       explanation: `Approaching ${topic} as a practical skill makes it more accessible and easier to learn.`,
-      difficulty: 'beginner'
+      difficulty
     },
     {
-      id: '3',
       question: `What is a common mistake when learning ${topic}?`,
       options: [
         'Practicing too much',
@@ -280,10 +496,9 @@ const generateGenericQuestions = (topic: string): QuizQuestion[] => {
       ],
       correctAnswer: 1,
       explanation: `Balance between theory and practice is essential for mastering ${topic}.`,
-      difficulty: 'intermediate'
+      difficulty
     },
     {
-      id: '4',
       question: `Which approach is most effective for mastering ${topic}?`,
       options: [
         'Memorization only',
@@ -293,10 +508,9 @@ const generateGenericQuestions = (topic: string): QuizQuestion[] => {
       ],
       correctAnswer: 1,
       explanation: `Consistent practice and regular review lead to better retention and understanding of ${topic}.`,
-      difficulty: 'intermediate'
+      difficulty
     },
     {
-      id: '5',
       question: `How does ${topic} relate to everyday communication?`,
       options: [
         'It has no practical use',
@@ -306,47 +520,68 @@ const generateGenericQuestions = (topic: string): QuizQuestion[] => {
       ],
       correctAnswer: 2,
       explanation: `Understanding ${topic} improves your ability to communicate clearly and effectively in various contexts.`,
-      difficulty: 'advanced'
+      difficulty
     }
   ];
+  
+  return genericPool.slice(0, count).map((q, idx) => ({ ...q, id: String(idx + 1) }));
 };
 
 /**
- * Main AI quiz generation function
- * Simulates 3-second AI processing with realistic output
+ * Context-Aware Quiz Generation
+ * Accepts source text and focus mode for intelligent assessment creation
  * 
- * @param topic - The topic for quiz generation
- * @returns Promise<GeneratedQuiz> - Generated quiz with 5 questions
+ * @param options - Configuration object
+ * @returns Promise<GeneratedQuiz> - Context-aware generated quiz
  */
-export const generateQuiz = async (topic: string): Promise<GeneratedQuiz> => {
-  // Simulate AI thinking time (3 seconds for realistic feel)
-  await new Promise(resolve => setTimeout(resolve, 3000));
+export const generateQuiz = async (options: {
+  topic?: string;
+  sourceText?: string;
+  focusMode?: FocusMode;
+  difficulty?: DifficultyLevel;
+  questionCount?: number;
+}): Promise<GeneratedQuiz> => {
+  const {
+    topic = 'English Language',
+    sourceText,
+    focusMode,
+    difficulty = 'intermediate',
+    questionCount = 5
+  } = options;
 
-  // Normalize topic for matching
+  // Simulate AI thinking time (2 seconds for realistic feel)
+  await new Promise(resolve => setTimeout(resolve, 2000));
+
+  let questions: QuizQuestion[];
   const normalizedTopic = topic.toLowerCase().trim();
   
-  // Find matching question bank
-  let questions: QuizQuestion[];
-  const matchedKey = Object.keys(QUESTION_BANKS).find(key => 
-    normalizedTopic.includes(key) || key.includes(normalizedTopic)
-  );
-
-  if (matchedKey) {
-    questions = QUESTION_BANKS[matchedKey];
+  // If source text is provided with focus mode, generate context-aware questions
+  if ((sourceText && sourceText.trim().length > 20) || focusMode) {
+    questions = generateContextAwareQuestions(sourceText, focusMode, difficulty, questionCount);
   } else {
-    questions = generateGenericQuestions(topic);
+    // Check topic-based question banks
+    const matchedKey = Object.keys(QUESTION_BANKS).find(key => 
+      normalizedTopic.includes(key) || key.includes(normalizedTopic)
+    );
+
+    if (matchedKey) {
+      questions = QUESTION_BANKS[matchedKey].slice(0, questionCount);
+    } else {
+      questions = generateGenericQuestions(topic, difficulty, questionCount);
+    }
   }
 
-  // Calculate estimated time (1 minute per question)
-  const estimatedTime = questions.length;
+  const estimatedTime = Math.ceil(questions.length * 1.5);
 
   return {
     topic,
     questions,
     generatedAt: new Date(),
     metadata: {
-      difficulty: 'mixed', // Contains beginner to advanced
-      estimatedTime
+      difficulty,
+      estimatedTime,
+      sourceText,
+      focusMode
     }
   };
 };
@@ -354,18 +589,145 @@ export const generateQuiz = async (topic: string): Promise<GeneratedQuiz> => {
 /**
  * Validate quiz generation input
  */
-export const validateQuizInput = (topic: string): { valid: boolean; error?: string } => {
-  if (!topic || topic.trim().length === 0) {
-    return { valid: false, error: 'Please enter a topic' };
+export const validateQuizInput = (options: {
+  topic?: string;
+  sourceText?: string;
+  questionCount?: number;
+}): { valid: boolean; error?: string } => {
+  const { topic, sourceText, questionCount } = options;
+  
+  // At least topic or source text must be provided
+  if ((!topic || topic.trim().length === 0) && (!sourceText || sourceText.trim().length === 0)) {
+    return { valid: false, error: 'Please provide either a topic or source material' };
   }
   
-  if (topic.trim().length < 2) {
-    return { valid: false, error: 'Topic must be at least 2 characters' };
-  }
-  
-  if (topic.trim().length > 100) {
+  if (topic && topic.trim().length > 100) {
     return { valid: false, error: 'Topic must be less than 100 characters' };
   }
   
+  if (questionCount && (questionCount < 1 || questionCount > 200)) {
+    return { valid: false, error: 'Question count must be between 1 and 200' };
+  }
+  
   return { valid: true };
+};
+
+/**
+ * THE INFINITE BRAIN - Procedural Generation Engine
+ * Mad-Libs Algorithm for generating 200+ unique questions
+ */
+
+const PROCEDURAL_TEMPLATES = {
+  subjects: [
+    'students', 'learners', 'educators', 'professionals', 'beginners', 
+    'scholars', 'practitioners', 'researchers', 'individuals', 'experts',
+    'teachers', 'writers', 'speakers', 'readers', 'analysts'
+  ],
+  verbs: [
+    'analyze', 'evaluate', 'understand', 'identify', 'demonstrate', 
+    'explain', 'apply', 'compare', 'synthesize', 'interpret',
+    'recognize', 'distinguish', 'formulate', 'justify', 'assess'
+  ],
+  contexts: [
+    'in academic settings', 'in professional contexts', 'in real-world scenarios',
+    'in formal writing', 'in everyday communication', 'in technical documentation',
+    'in literary analysis', 'in research papers', 'in presentations',
+    'in collaborative work', 'in critical thinking', 'in problem-solving'
+  ],
+  modifiers: [
+    'effectively', 'accurately', 'precisely', 'clearly', 'systematically',
+    'thoroughly', 'critically', 'creatively', 'logically', 'coherently',
+    'consistently', 'objectively', 'comprehensively', 'strategically', 'analytically'
+  ],
+  topics: [
+    'grammar structures', 'vocabulary development', 'reading comprehension',
+    'writing mechanics', 'language patterns', 'text analysis', 'communication skills',
+    'linguistic features', 'discourse markers', 'rhetorical devices'
+  ]
+};
+
+const PROCEDURAL_OPTIONS_POOL = [
+  'By memorizing rules without context',
+  'Through practical application and examples',
+  'By ignoring contextual clues',
+  'Using systematic analysis techniques',
+  'Through passive observation only',
+  'By combining multiple strategies',
+  'Through isolated practice drills',
+  'Using real-world applications',
+  'By following prescriptive rules strictly',
+  'Through iterative refinement',
+  'By avoiding complex examples',
+  'Using evidence-based reasoning',
+  'Through collaborative discussion',
+  'By relying on intuition alone',
+  'Using structured frameworks'
+];
+
+const shuffle = <T,>(array: T[]): T[] => {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+};
+
+const randomChoice = <T,>(array: T[]): T => array[Math.floor(Math.random() * array.length)];
+
+/**
+ * Generate batch of procedurally generated questions
+ * Capable of producing 200+ unique items
+ */
+export const generateMockBatch = (topic: string, count: number): Question[] => {
+  const questions: Question[] = [];
+  const usedCombinations = new Set<string>();
+  
+  for (let i = 0; i < count; i++) {
+    let combination: string;
+    let attempts = 0;
+    
+    do {
+      const subject = randomChoice(PROCEDURAL_TEMPLATES.subjects);
+      const verb = randomChoice(PROCEDURAL_TEMPLATES.verbs);
+      const context = randomChoice(PROCEDURAL_TEMPLATES.contexts);
+      const modifier = randomChoice(PROCEDURAL_TEMPLATES.modifiers);
+      
+      combination = `${subject}-${verb}-${context}-${modifier}`;
+      attempts++;
+      
+      if (attempts > 50) break;
+    } while (usedCombinations.has(combination));
+    
+    usedCombinations.add(combination);
+    
+    const parts = combination.split('-');
+    const [subject, verb, context, modifier] = parts;
+    
+    // Generate question text using procedural templates
+    const questionText = `How should ${subject} ${verb} ${randomChoice(PROCEDURAL_TEMPLATES.topics)} ${modifier} ${context}?`;
+    
+    // Generate 4 unique options
+    const shuffledOptions = shuffle(PROCEDURAL_OPTIONS_POOL);
+    const options = shuffledOptions.slice(0, 4);
+    const correctIndex = Math.floor(Math.random() * 4);
+    
+    // Ensure correct answer is contextually appropriate
+    options[correctIndex] = `${modifier.charAt(0).toUpperCase() + modifier.slice(1)} ${verb} the material ${context}`;
+    
+    const correctAnswer = options[correctIndex];
+    
+    questions.push({
+      id: `gen-${Date.now()}-${i}`,
+      text: questionText,
+      options,
+      correctAnswer,
+      explanation: `The most effective approach is to ${correctAnswer.toLowerCase()}, which ensures comprehensive understanding and practical application.`,
+      tags: [topic.toLowerCase(), subject, verb, 'procedural'],
+      difficulty: i % 3 === 0 ? 'beginner' : i % 3 === 1 ? 'intermediate' : 'advanced',
+      createdAt: new Date()
+    });
+  }
+  
+  return questions;
 };
