@@ -68,13 +68,13 @@ const AIQuizCreator: React.FC = () => {
       <header className="border-b border-zinc-200 dark:border-zinc-800">
         <div className="max-w-7xl mx-auto px-8 py-6">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2 text-text-light-primary dark:text-text-dark-primary hover:opacity-70 transition-opacity">
+            <Link to="/" className="flex items-center gap-2 text-light-primary dark:text-dark-primary hover:opacity-70 transition-opacity">
               <span className="material-symbols-outlined">arrow_back</span>
               <span className="text-sm font-medium">Back to Mission Control</span>
             </Link>
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-primary">auto_awesome</span>
-              <h1 className="font-heading text-xl font-bold text-text-light-primary dark:text-text-dark-primary">AI Studio</h1>
+              <h1 className="font-heading text-xl font-bold text-light-primary dark:text-dark-primary">AI Studio</h1>
             </div>
           </div>
         </div>
@@ -85,10 +85,10 @@ const AIQuizCreator: React.FC = () => {
         <div className="max-w-4xl mx-auto px-8 py-24">
           {/* Hero Headline */}
           <div className="mb-20">
-            <h1 className="font-heading text-7xl font-bold mb-8 leading-none text-text-light-primary dark:text-text-dark-primary">
+            <h1 className="font-heading text-7xl font-bold mb-8 leading-none text-light-primary dark:text-dark-primary">
               What are we<br />teaching today?
             </h1>
-            <p className="text-2xl font-light text-text-light-secondary dark:text-text-dark-secondary leading-relaxed max-w-2xl">
+            <p className="text-2xl font-light text-light-secondary dark:text-dark-secondary leading-relaxed max-w-2xl">
               Describe a topic, concept, or skill. Our AI will craft a thoughtful assessment in moments.
             </p>
           </div>
@@ -101,7 +101,7 @@ const AIQuizCreator: React.FC = () => {
               onChange={(e) => setTopic(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
               placeholder="e.g., Present Perfect Tense, Conditionals, Vocabulary..."
-              className="w-full text-4xl font-light py-8 border-b-2 border-zinc-300 dark:border-zinc-700 bg-transparent focus:border-black dark:focus:border-white outline-none transition-all placeholder:text-zinc-300 dark:placeholder:text-zinc-600 text-text-light-primary dark:text-text-dark-primary"
+              className="w-full text-4xl font-light py-8 border-b-2 border-zinc-300 dark:border-zinc-700 bg-transparent focus:border-black dark:focus:border-white outline-none transition-all placeholder:text-zinc-300 dark:placeholder:text-zinc-600 text-light-primary dark:text-dark-primary"
               autoFocus
             />
             {error && (
@@ -120,7 +120,7 @@ const AIQuizCreator: React.FC = () => {
           </button>
 
           {/* Subtle hint */}
-          <p className="mt-8 text-center text-sm text-text-light-secondary dark:text-text-dark-secondary">
+          <p className="mt-8 text-center text-sm text-light-secondary dark:text-dark-secondary">
             Press Enter or click the button to begin
           </p>
         </div>
@@ -135,11 +135,11 @@ const AIQuizCreator: React.FC = () => {
             </span>
           </div>
           
-          <h2 className="font-heading text-6xl font-bold mb-8 text-text-light-primary dark:text-text-dark-primary">
+          <h2 className="font-heading text-6xl font-bold mb-8 text-light-primary dark:text-dark-primary">
             Consulting the archives{thinkingDots}
           </h2>
           
-          <p className="text-xl font-light text-text-light-secondary dark:text-text-dark-secondary max-w-2xl mx-auto">
+          <p className="text-xl font-light text-light-secondary dark:text-dark-secondary max-w-2xl mx-auto">
             Analyzing topic, selecting questions, calibrating difficulty
           </p>
 
@@ -162,16 +162,16 @@ const AIQuizCreator: React.FC = () => {
           <div className="mb-16 pb-8 border-b border-zinc-200 dark:border-zinc-800">
             <div className="flex items-start justify-between mb-6">
               <div>
-                <h1 className="font-heading text-6xl font-bold mb-4 leading-tight text-text-light-primary dark:text-text-dark-primary">
+                <h1 className="font-heading text-6xl font-bold mb-4 leading-tight text-light-primary dark:text-dark-primary">
                   {generatedQuiz.topic}
                 </h1>
-                <p className="text-xl font-light text-text-light-secondary dark:text-text-dark-secondary">
+                <p className="text-xl font-light text-light-secondary dark:text-dark-secondary">
                   {generatedQuiz.questions.length} Questions · {generatedQuiz.metadata.estimatedTime} min
                 </p>
               </div>
               <button
                 onClick={handleStartOver}
-                className="text-text-light-secondary dark:text-text-dark-secondary hover:text-text-light-primary dark:hover:text-text-dark-primary transition-colors font-medium flex items-center gap-2"
+                className="text-light-secondary dark:text-dark-secondary hover:text-light-primary dark:hover:text-dark-primary transition-colors font-medium flex items-center gap-2"
               >
                 <span className="material-symbols-outlined">refresh</span>
                 <span>Start Over</span>
@@ -188,7 +188,7 @@ const AIQuizCreator: React.FC = () => {
               >
                 {/* Question Number & Difficulty */}
                 <div className="flex items-center justify-between mb-4">
-                  <div className="text-xs uppercase tracking-widest text-text-light-secondary dark:text-text-dark-secondary">
+                  <div className="text-xs uppercase tracking-widest text-light-secondary dark:text-dark-secondary">
                     Question {index + 1} of {generatedQuiz.questions.length}
                   </div>
                   <div className={`text-xs uppercase tracking-widest px-3 py-1 ${
@@ -201,7 +201,7 @@ const AIQuizCreator: React.FC = () => {
                 </div>
 
                 {/* Question Text */}
-                <h3 className="font-heading text-2xl font-bold mb-8 leading-relaxed text-text-light-primary dark:text-text-dark-primary">
+                <h3 className="font-heading text-2xl font-bold mb-8 leading-relaxed text-light-primary dark:text-dark-primary">
                   {question.question}
                 </h3>
 
@@ -219,7 +219,7 @@ const AIQuizCreator: React.FC = () => {
                       `}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-light text-text-light-primary dark:text-text-dark-primary">{option}</span>
+                        <span className="font-light text-light-primary dark:text-dark-primary">{option}</span>
                         {optionIndex === question.correctAnswer && (
                           <span className="material-symbols-outlined text-primary fill">check_circle</span>
                         )}
@@ -230,10 +230,10 @@ const AIQuizCreator: React.FC = () => {
 
                 {/* Explanation */}
                 <div className="pt-6 border-t border-zinc-200 dark:border-zinc-800">
-                  <p className="text-xs uppercase tracking-widest text-text-light-secondary dark:text-text-dark-secondary mb-2">
+                  <p className="text-xs uppercase tracking-widest text-light-secondary dark:text-dark-secondary mb-2">
                     Explanation
                   </p>
-                  <p className="text-text-light-secondary dark:text-text-dark-secondary leading-relaxed">
+                  <p className="text-light-secondary dark:text-dark-secondary leading-relaxed">
                     {question.explanation}
                   </p>
                 </div>
@@ -252,7 +252,7 @@ const AIQuizCreator: React.FC = () => {
             </button>
             <button
               onClick={handleStartOver}
-              className="px-8 py-8 border-2 border-zinc-300 dark:border-zinc-700 text-text-light-primary dark:text-text-dark-primary text-xl font-medium hover:border-primary dark:hover:border-primary transition-all flex items-center justify-center gap-3"
+              className="px-8 py-8 border-2 border-zinc-300 dark:border-zinc-700 text-light-primary dark:text-dark-primary text-xl font-medium hover:border-primary dark:hover:border-primary transition-all flex items-center justify-center gap-3"
             >
               <span className="material-symbols-outlined">refresh</span>
               <span>Create Another</span>

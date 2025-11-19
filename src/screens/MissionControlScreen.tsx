@@ -50,7 +50,7 @@ const MissionControlScreen = () => {
     ];
 
     return (
-        <div className="bg-background-light dark:bg-background-dark font-display text-text-light-primary dark:text-text-dark-primary">
+        <div className="bg-background-light dark:bg-background-dark font-display text-light-primary dark:text-dark-primary">
             <div className="flex min-h-screen">
                 <aside className="sticky top-0 h-screen w-64 flex-shrink-0 bg-card-light dark:bg-card-dark shadow-md">
                     <div className="flex h-full flex-col justify-between p-4">
@@ -111,8 +111,8 @@ const MissionControlScreen = () => {
                                         {userProfile.name.charAt(0)}
                                     </div>
                                     <div className="flex flex-col">
-                                        <h1 className="text-base font-medium leading-normal text-text-light-primary dark:text-text-dark-primary">{userProfile.name}</h1>
-                                        <p className="text-sm font-normal leading-normal text-text-light-secondary dark:text-text-dark-secondary">Level {userProfile.level}</p>
+                                        <h1 className="text-base font-medium leading-normal text-light-primary dark:text-dark-primary">{userProfile.name}</h1>
+                                        <p className="text-sm font-normal leading-normal text-light-secondary dark:text-dark-secondary">Level {userProfile.level}</p>
                                     </div>
                                 </div>
                             </div>
@@ -123,8 +123,8 @@ const MissionControlScreen = () => {
                 <main className="w-full p-6 lg:p-10">
                     <div className="mx-auto max-w-7xl">
                         <div className="mb-8">
-                            <h1 className="font-heading text-4xl font-bold tracking-tight text-text-light-primary dark:text-text-dark-primary">Welcome back, {userProfile.name.split(' ')[0]}!</h1>
-                            <p className="mt-2 text-base font-normal leading-normal text-text-light-secondary dark:text-text-dark-secondary">Let's continue your learning journey.</p>
+                            <h1 className="font-heading text-4xl font-bold tracking-tight text-light-primary dark:text-dark-primary">Welcome back, {userProfile.name.split(' ')[0]}!</h1>
+                            <p className="mt-2 text-base font-normal leading-normal text-light-secondary dark:text-dark-secondary">Let's continue your learning journey.</p>
                         </div>
 
                         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -135,12 +135,12 @@ const MissionControlScreen = () => {
                                     </div>
                                     <div className="flex w-full flex-col justify-between gap-4 p-6 lg:w-3/5">
                                         <div>
-                                            <p className="text-sm font-normal leading-normal text-text-light-secondary dark:text-text-dark-secondary">Up Next</p>
-                                            <p className="mt-1 font-heading text-xl font-bold leading-tight tracking-tight text-text-light-primary dark:text-text-dark-primary">Unit 5: Mastering the Present Perfect</p>
-                                            <p className="mt-2 text-base font-normal leading-normal text-text-light-secondary dark:text-text-dark-secondary">Learn how to talk about past events that are still relevant to the present.</p>
+                                            <p className="text-sm font-normal leading-normal text-light-secondary dark:text-dark-secondary">Up Next</p>
+                                            <p className="mt-1 font-heading text-xl font-bold leading-tight tracking-tight text-light-primary dark:text-dark-primary">Unit 5: Mastering the Present Perfect</p>
+                                            <p className="mt-2 text-base font-normal leading-normal text-light-secondary dark:text-dark-secondary">Learn how to talk about past events that are still relevant to the present.</p>
                                         </div>
                                         <div className="flex items-center justify-between">
-                                            <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">Approx. 15 minutes</p>
+                                            <p className="text-sm text-light-secondary dark:text-dark-secondary">Approx. 15 minutes</p>
                                             <Link to="/learn" className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-5 bg-accent-green text-white text-sm font-medium leading-normal transition-transform hover:scale-105">
                                                 <span>Continue Learning</span>
                                             </Link>
@@ -151,35 +151,35 @@ const MissionControlScreen = () => {
                                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                     <div className="flex flex-col gap-2 rounded-xl bg-card-light dark:bg-card-dark p-6 shadow-sm">
                                         <span className="material-symbols-outlined text-accent-green">translate</span>
-                                        <p className="text-3xl font-bold font-heading text-text-light-primary dark:text-text-dark-primary">{stats.wordsLearned}</p>
-                                        <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">Words Learned</p>
+                                        <p className="text-3xl font-bold font-heading text-light-primary dark:text-dark-primary">{stats.wordsLearned}</p>
+                                        <p className="text-sm text-light-secondary dark:text-dark-secondary">Words Learned</p>
                                     </div>
                                     <div className="flex flex-col gap-2 rounded-xl bg-card-light dark:bg-card-dark p-6 shadow-sm">
                                         <span className="material-symbols-outlined text-accent-green">checklist</span>
-                                        <p className="text-3xl font-bold font-heading text-text-light-primary dark:text-text-dark-primary">{stats.lessonsCompleted}</p>
-                                        <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">Lessons Completed</p>
+                                        <p className="text-3xl font-bold font-heading text-light-primary dark:text-dark-primary">{stats.lessonsCompleted}</p>
+                                        <p className="text-sm text-light-secondary dark:text-dark-secondary">Lessons Completed</p>
                                     </div>
                                     <div className="flex flex-col gap-2 rounded-xl bg-card-light dark:bg-card-dark p-6 shadow-sm">
                                         <span className="material-symbols-outlined text-accent-green">timer</span>
-                                        <p className="text-3xl font-bold font-heading text-text-light-primary dark:text-text-dark-primary">{stats.hoursPracticed}</p>
-                                        <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">Hours Practiced</p>
+                                        <p className="text-3xl font-bold font-heading text-light-primary dark:text-dark-primary">{stats.hoursPracticed}</p>
+                                        <p className="text-sm text-light-secondary dark:text-dark-secondary">Hours Practiced</p>
                                     </div>
                                 </div>
 
                                 <div className="rounded-xl bg-card-light dark:bg-card-dark p-6 shadow-sm">
                                     <div className="flex items-center justify-between mb-4">
-                                        <h2 className="font-heading text-xl font-bold text-text-light-primary dark:text-text-dark-primary">Available Classes</h2>
+                                        <h2 className="font-heading text-xl font-bold text-light-primary dark:text-dark-primary">Available Classes</h2>
                                         <Link to="/courses" className="text-sm text-primary hover:underline">View All</Link>
                                     </div>
                                     {loading ? (
-                                        <p className="text-text-light-secondary dark:text-text-dark-secondary">Loading classes...</p>
+                                        <p className="text-light-secondary dark:text-dark-secondary">Loading classes...</p>
                                     ) : classes.length > 0 ? (
                                         <div className="space-y-3">
                                             {classes.slice(0, 5).map((cls) => (
                                                 <div key={cls.id} className="flex items-center justify-between p-3 rounded-lg bg-background-light dark:bg-background-dark hover:bg-primary/5 transition-colors">
                                                     <div className="flex-1">
-                                                        <p className="font-medium text-text-light-primary dark:text-text-dark-primary">{cls.name}</p>
-                                                        <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">
+                                                        <p className="font-medium text-light-primary dark:text-dark-primary">{cls.name}</p>
+                                                        <p className="text-sm text-light-secondary dark:text-dark-secondary">
                                                             {cls.teacher} • {cls.days.join(', ')} • {cls.start_time}
                                                         </p>
                                                     </div>
@@ -190,7 +190,7 @@ const MissionControlScreen = () => {
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className="text-text-light-secondary dark:text-text-dark-secondary">No classes available. Start the backend server to load classes.</p>
+                                        <p className="text-light-secondary dark:text-dark-secondary">No classes available. Start the backend server to load classes.</p>
                                     )}
                                 </div>
                             </div>
@@ -198,8 +198,8 @@ const MissionControlScreen = () => {
                             <div className="flex flex-col gap-6 lg:col-span-1">
                                 <div className="flex flex-col gap-4 rounded-xl bg-card-light dark:bg-card-dark p-6 shadow-sm">
                                     <div className="flex items-center justify-between">
-                                        <p className="text-base font-medium leading-normal text-text-light-primary dark:text-text-dark-primary">Daily Goal</p>
-                                        <p className="text-sm font-normal leading-normal text-text-light-primary dark:text-text-dark-primary">{dailyGoal.current}/{dailyGoal.total} XP</p>
+                                        <p className="text-base font-medium leading-normal text-light-primary dark:text-dark-primary">Daily Goal</p>
+                                        <p className="text-sm font-normal leading-normal text-light-primary dark:text-dark-primary">{dailyGoal.current}/{dailyGoal.total} XP</p>
                                     </div>
                                     <div className="h-2 w-full rounded-full bg-primary/10 dark:bg-primary/20">
                                         <div className="h-2 rounded-full bg-primary transition-all" style={{ width: `${(dailyGoal.current / dailyGoal.total) * 100}%` }}></div>
@@ -212,9 +212,9 @@ const MissionControlScreen = () => {
 
                                 <div className="flex items-center justify-between gap-4 rounded-xl bg-card-light dark:bg-card-dark p-6 shadow-sm">
                                     <div className="flex flex-col gap-2">
-                                        <p className="font-heading text-lg font-bold leading-tight text-text-light-primary dark:text-text-dark-primary">Review Queue</p>
-                                        <p className="text-sm font-normal leading-normal text-text-light-secondary dark:text-text-dark-secondary">You have 12 items to review.</p>
-                                        <Link to="/quiz" className="mt-2 flex w-fit cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg h-9 px-4 bg-primary/10 dark:bg-primary/20 text-text-light-primary dark:text-text-dark-primary text-sm font-medium leading-normal transition-colors hover:bg-primary/20 dark:hover:bg-primary/30">
+                                        <p className="font-heading text-lg font-bold leading-tight text-light-primary dark:text-dark-primary">Review Queue</p>
+                                        <p className="text-sm font-normal leading-normal text-light-secondary dark:text-dark-secondary">You have 12 items to review.</p>
+                                        <Link to="/quiz" className="mt-2 flex w-fit cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg h-9 px-4 bg-primary/10 dark:bg-primary/20 text-light-primary dark:text-dark-primary text-sm font-medium leading-normal transition-colors hover:bg-primary/20 dark:hover:bg-primary/30">
                                             <span className="material-symbols-outlined text-base">refresh</span>
                                             <span>Start Review</span>
                                         </Link>
@@ -223,12 +223,12 @@ const MissionControlScreen = () => {
                                 </div>
 
                                 <div className="flex flex-col gap-4 rounded-xl bg-card-light dark:bg-card-dark p-6 shadow-sm">
-                                    <p className="text-base font-medium leading-normal text-text-light-primary dark:text-text-dark-primary">Announcements</p>
+                                    <p className="text-base font-medium leading-normal text-light-primary dark:text-dark-primary">Announcements</p>
                                     <div className="flex flex-col gap-3">
                                         {announcements.map((announcement, index) => (
                                             <div key={index} className="flex flex-col gap-1 pb-3 border-b border-black/10 dark:border-white/10 last:border-0 last:pb-0">
-                                                <p className="text-sm font-medium leading-normal text-text-light-primary dark:text-text-dark-primary">{announcement.title}</p>
-                                                <p className="text-xs font-normal leading-normal text-text-light-secondary dark:text-text-dark-secondary">{announcement.description}</p>
+                                                <p className="text-sm font-medium leading-normal text-light-primary dark:text-dark-primary">{announcement.title}</p>
+                                                <p className="text-xs font-normal leading-normal text-light-secondary dark:text-dark-secondary">{announcement.description}</p>
                                             </div>
                                         ))}
                                     </div>

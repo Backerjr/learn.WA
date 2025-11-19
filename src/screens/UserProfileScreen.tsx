@@ -26,7 +26,7 @@ const UserProfileScreen = () => {
     const tabs = ['Profile', 'Statistics', 'Achievements'];
 
     return (
-        <div className="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+        <div className="bg-background-light dark:bg-background-dark font-display text-light-primary dark:text-dark-primary">
             <div className="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
                 <div className="layout-container flex h-full grow flex-col">
                     <div className="flex flex-1 justify-center py-5 sm:py-8 md:py-10">
@@ -37,8 +37,8 @@ const UserProfileScreen = () => {
                                     <div className="flex items-center gap-5">
                                         <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-24 w-24 md:h-32 md:w-32 flex-shrink-0" style={{ backgroundImage: `url("${user.avatarUrl}")` }}></div>
                                         <div className="flex flex-col justify-center">
-                                            <p className="text-text-light dark:text-text-dark text-2xl md:text-3xl font-bold leading-tight tracking-tight font-heading">{user.name}</p>
-                                            <p className="text-text-muted-light dark:text-text-muted-dark text-base font-normal leading-normal">{user.level}</p>
+                                            <p className="text-light-primary dark:text-dark-primary text-2xl md:text-3xl font-bold leading-tight tracking-tight font-heading">{user.name}</p>
+                                            <p className="text-light-secondary dark:text-dark-secondary text-base font-normal leading-normal">{user.level}</p>
                                         </div>
                                     </div>
                                     <button className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary text-white text-sm font-bold leading-normal tracking-wide w-full @[480px]:w-auto hover:bg-primary/90 transition-colors">
@@ -57,8 +57,8 @@ const UserProfileScreen = () => {
                                             onClick={() => setActiveTab(tab)}
                                             className={`flex flex-col items-center justify-center border-b-[3px] pb-[13px] pt-4 transition-colors ${
                                                 activeTab === tab
-                                                    ? 'border-b-primary text-text-light dark:text-text-dark'
-                                                    : 'border-b-transparent text-text-muted-light dark:text-text-muted-dark hover:border-primary/50 hover:text-text-light dark:hover:text-text-dark'
+                                                    ? 'border-b-primary text-light-primary dark:text-dark-primary'
+                                                    : 'border-b-transparent text-light-secondary dark:text-dark-secondary hover:border-primary/50 hover:text-light-primary dark:hover:text-dark-primary'
                                             }`}
                                         >
                                             <p className="text-sm font-bold leading-normal tracking-wide">{tab}</p>
@@ -72,20 +72,20 @@ const UserProfileScreen = () => {
                                 <div className="flex flex-col gap-8">
                                     {/* Courses In Progress */}
                                     <div>
-                                        <h2 className="text-text-light dark:text-text-dark text-2xl font-bold leading-tight tracking-tight font-heading px-4 pb-3 pt-5">Courses In Progress</h2>
+                                        <h2 className="text-light-primary dark:text-dark-primary text-2xl font-bold leading-tight tracking-tight font-heading px-4 pb-3 pt-5">Courses In Progress</h2>
                                         <div className="grid grid-cols-1 @[640px]:grid-cols-2 gap-4">
                                             {courses.map((course, index) => (
                                                 <div key={index} className="p-4 w-full">
                                                     <div className="flex flex-col gap-4 rounded-xl bg-card-light dark:bg-card-dark/80 p-6 shadow-sm">
                                                         <div className="flex flex-col gap-1">
-                                                            <p className="text-text-muted-light dark:text-text-muted-dark text-sm font-normal leading-normal">{course.course}</p>
-                                                            <p className="text-text-light dark:text-text-dark text-lg font-bold leading-tight font-heading">{course.lesson}</p>
+                                                            <p className="text-light-secondary dark:text-dark-secondary text-sm font-normal leading-normal">{course.course}</p>
+                                                            <p className="text-light-primary dark:text-dark-primary text-lg font-bold leading-tight font-heading">{course.lesson}</p>
                                                         </div>
                                                         <div className="w-full bg-gray-300 dark:bg-gray-600 rounded-full h-2">
                                                             <div className="bg-primary h-2 rounded-full" style={{ width: `${course.progress}%` }}></div>
                                                         </div>
                                                         <div className="flex justify-between items-center">
-                                                            <p className="text-text-muted-light dark:text-text-muted-dark text-sm font-normal leading-normal">{course.progress}% Complete</p>
+                                                            <p className="text-light-secondary dark:text-dark-secondary text-sm font-normal leading-normal">{course.progress}% Complete</p>
                                                             <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-5 bg-primary/20 text-primary dark:bg-primary/30 dark:text-white text-sm font-bold leading-normal w-fit hover:bg-primary/30 dark:hover:bg-primary/40 transition-colors">
                                                                 <span className="truncate">Continue</span>
                                                             </button>
@@ -98,22 +98,22 @@ const UserProfileScreen = () => {
 
                                     {/* Settings Section */}
                                     <div>
-                                        <h2 className="text-text-light dark:text-text-dark text-2xl font-bold leading-tight tracking-tight font-heading px-4 pb-3 pt-5">Settings</h2>
+                                        <h2 className="text-light-primary dark:text-dark-primary text-2xl font-bold leading-tight tracking-tight font-heading px-4 pb-3 pt-5">Settings</h2>
                                         <div className="p-4">
                                             <form className="flex flex-col gap-6 rounded-xl bg-card-light dark:bg-card-dark/80 p-6 shadow-sm">
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                                     <div>
-                                                        <label className="block text-sm font-medium text-text-muted-light dark:text-text-muted-dark mb-1" htmlFor="email">Email Address</label>
+                                                        <label className="block text-sm font-medium text-light-secondary dark:text-dark-secondary mb-1" htmlFor="email">Email Address</label>
                                                         <input className="w-full h-10 px-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-background-dark focus:ring-2 focus:ring-primary focus:border-primary transition" id="email" type="email" defaultValue={user.email} />
                                                     </div>
                                                     <div>
-                                                        <label className="block text-sm font-medium text-text-muted-light dark:text-text-muted-dark mb-1" htmlFor="password">New Password</label>
+                                                        <label className="block text-sm font-medium text-light-secondary dark:text-dark-secondary mb-1" htmlFor="password">New Password</label>
                                                         <input className="w-full h-10 px-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-background-dark focus:ring-2 focus:ring-primary focus:border-primary transition" id="password" placeholder="••••••••" type="password" />
                                                     </div>
                                                 </div>
                                                 <div className="border-t border-gray-300 dark:border-gray-600 pt-6">
-                                                    <h3 className="text-lg font-bold font-heading text-text-light dark:text-text-dark">Notifications</h3>
-                                                    <p className="text-text-muted-light dark:text-text-muted-dark text-sm mt-1 mb-4">How would you like to be notified?</p>
+                                                    <h3 className="text-lg font-bold font-heading text-light-primary dark:text-dark-primary">Notifications</h3>
+                                                    <p className="text-light-secondary dark:text-dark-secondary text-sm mt-1 mb-4">How would you like to be notified?</p>
                                                     <div className="flex flex-col gap-3">
                                                         <div className="flex items-center gap-3">
                                                             <input defaultChecked className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" id="email-notifs" name="notifications" type="checkbox" />

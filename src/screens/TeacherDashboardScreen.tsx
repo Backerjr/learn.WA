@@ -42,7 +42,7 @@ const TeacherDashboardScreen = () => {
     ];
 
     return (
-        <div className="bg-background-light dark:bg-background-dark font-display text-text-light-primary dark:text-text-dark-primary min-h-screen">
+        <div className="bg-background-light dark:bg-background-dark font-display text-light-primary dark:text-dark-primary min-h-screen">
             <div className="flex min-h-screen">
                 <aside className="sticky top-0 h-screen w-64 flex-shrink-0 bg-card-light dark:bg-card-dark shadow-md">
                     <div className="flex h-full flex-col justify-between p-4">
@@ -72,39 +72,39 @@ const TeacherDashboardScreen = () => {
                 <main className="w-full p-6 lg:p-10">
                     <div className="mx-auto max-w-7xl">
                         <div className="mb-8">
-                            <h1 className="font-heading text-4xl font-bold tracking-tight text-text-light-primary dark:text-text-dark-primary">Teacher Portal</h1>
-                            <p className="mt-2 text-base font-normal leading-normal text-text-light-secondary dark:text-text-dark-secondary">Manage your classes and track student progress.</p>
+                            <h1 className="font-heading text-4xl font-bold tracking-tight text-light-primary dark:text-dark-primary">Teacher Portal</h1>
+                            <p className="mt-2 text-base font-normal leading-normal text-light-secondary dark:text-dark-secondary">Manage your classes and track student progress.</p>
                         </div>
 
                         <div className="grid grid-cols-1 gap-6 md:grid-cols-3 mb-8">
                             <div className="flex flex-col gap-2 rounded-xl bg-card-light dark:bg-card-dark p-6 shadow-sm">
                                 <span className="material-symbols-outlined text-primary">group</span>
-                                <p className="text-3xl font-bold font-heading text-text-light-primary dark:text-text-dark-primary">{stats.totalStudents}</p>
-                                <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">Total Students</p>
+                                <p className="text-3xl font-bold font-heading text-light-primary dark:text-dark-primary">{stats.totalStudents}</p>
+                                <p className="text-sm text-light-secondary dark:text-dark-secondary">Total Students</p>
                             </div>
                             <div className="flex flex-col gap-2 rounded-xl bg-card-light dark:bg-card-dark p-6 shadow-sm">
                                 <span className="material-symbols-outlined text-accent-green">library_books</span>
-                                <p className="text-3xl font-bold font-heading text-text-light-primary dark:text-text-dark-primary">{stats.activeClasses}</p>
-                                <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">Active Classes</p>
+                                <p className="text-3xl font-bold font-heading text-light-primary dark:text-dark-primary">{stats.activeClasses}</p>
+                                <p className="text-sm text-light-secondary dark:text-dark-secondary">Active Classes</p>
                             </div>
                             <div className="flex flex-col gap-2 rounded-xl bg-card-light dark:bg-card-dark p-6 shadow-sm">
                                 <span className="material-symbols-outlined text-accent-orange">assignment</span>
-                                <p className="text-3xl font-bold font-heading text-text-light-primary dark:text-text-dark-primary">{stats.pendingAssignments}</p>
-                                <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">Pending Assignments</p>
+                                <p className="text-3xl font-bold font-heading text-light-primary dark:text-dark-primary">{stats.pendingAssignments}</p>
+                                <p className="text-sm text-light-secondary dark:text-dark-secondary">Pending Assignments</p>
                             </div>
                         </div>
 
                         <div className="rounded-xl bg-card-light dark:bg-card-dark p-6 shadow-sm">
-                            <h2 className="font-heading text-xl font-bold text-text-light-primary dark:text-text-dark-primary mb-4">Your Classes</h2>
+                            <h2 className="font-heading text-xl font-bold text-light-primary dark:text-dark-primary mb-4">Your Classes</h2>
                             <div className="space-y-3">
                                 {classes.map((cls) => (
                                     <div key={cls.id} className="flex items-center justify-between p-4 rounded-lg bg-background-light dark:bg-background-dark hover:bg-primary/5 transition-colors">
                                         <div className="flex-1">
-                                            <p className="font-medium text-text-light-primary dark:text-text-dark-primary">{cls.name}</p>
-                                            <p className="text-sm text-text-light-secondary dark:text-text-dark-secondary">{cls.schedule}</p>
+                                            <p className="font-medium text-light-primary dark:text-dark-primary">{cls.name}</p>
+                                            <p className="text-sm text-light-secondary dark:text-dark-secondary">{cls.schedule}</p>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-sm font-medium text-text-light-primary dark:text-text-dark-primary">{cls.students} students</p>
+                                            <p className="text-sm font-medium text-light-primary dark:text-dark-primary">{cls.students} students</p>
                                         </div>
                                     </div>
                                 ))}

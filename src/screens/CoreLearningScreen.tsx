@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const CoreLearningScreen = () => {
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
 
     const lessonSteps = [
-        { name: 'Introduction', status: currentStepIndex > 0 ? 'completed' : currentStepIndex === 0 ? 'active' : 'pending' },
-        { name: 'Vocabulary Deep Dive', status: currentStepIndex > 1 ? 'completed' : currentStepIndex === 1 ? 'active' : 'pending' },
-        { name: 'Comprehension Check', status: currentStepIndex > 2 ? 'completed' : currentStepIndex === 2 ? 'active' : 'pending' },
-        { name: 'Active Practice', status: currentStepIndex > 3 ? 'completed' : currentStepIndex === 3 ? 'active' : 'pending' },
-        { name: 'Conclusion', status: currentStepIndex > 4 ? 'completed' : currentStepIndex === 4 ? 'active' : 'pending' },
+        { name: 'Introduction', status: 'completed' },
+        { name: 'Vocabulary Deep Dive', status: 'completed' },
+        { name: 'Comprehension Check', status: 'active' },
+        { name: 'Active Practice', status: 'pending' },
+        { name: 'Conclusion', status: 'pending' },
     ];
 
     const quizQuestions = [
@@ -23,83 +23,57 @@ const CoreLearningScreen = () => {
             options: ['Ground', 'Hands', 'Base', 'Up'],
             correctAnswer: 'Base',
         },
-        {
-            question: '3. When you need to make a quick decision, you might say "let\'s call it a ___."',
-            options: ['Day', 'Night', 'Deal', 'Time'],
-            correctAnswer: 'Day',
-        },
-        {
-            question: '4. To start fresh with a new approach, you "go back to the ___."',
-            options: ['Start', 'Beginning', 'Drawing board', 'First step'],
-            correctAnswer: 'Drawing board',
-        },
-        {
-            question: '5. When things are progressing smoothly, you can say everything is "running like ___."',
-            options: ['Clockwork', 'Water', 'Wind', 'Fire'],
-            correctAnswer: 'Clockwork',
-        },
     ];
 
-    const handleNextStep = () => {
-        if (currentStepIndex < lessonSteps.length - 1) {
-            setCurrentStepIndex(currentStepIndex + 1);
-        }
-    };
-
-    const handlePreviousStep = () => {
-        if (currentStepIndex > 0) {
-            setCurrentStepIndex(currentStepIndex - 1);
-        }
-    };
-
     return (
-        <div className="font-display bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+        <div className="font-display bg-background-light dark:bg-background-dark text-light-primary dark:text-dark-primary">
             <div className="relative flex min-h-screen w-full flex-col">
                 <div className="flex h-full min-h-screen">
-                    <aside className="flex flex-col justify-between bg-card-light dark:bg-card-dark border-r border-border-light dark:border-border-dark w-72 p-6 transition-all duration-300">
+                    {/* Collapsible Lesson Stepper (Sidebar) */}
+                    <aside className="flex flex-col justify-between bg-card-light dark:bg-card-dark border-r border-gray-200 dark:border-gray-700 w-72 p-6 transition-all duration-300">
                         <div>
                             <div className="flex items-center justify-between mb-8">
                                 <h2 className="font-heading text-lg font-bold">Lesson Plan</h2>
-                                <button className="p-1 rounded-md hover:bg-primary/10 dark:hover:bg-primary/20 text-text-light dark:text-text-dark">
+                                <button className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-light-primary dark:text-dark-primary">
                                     <span className="material-symbols-outlined text-xl">menu_open</span>
                                 </button>
                             </div>
                             <nav className="flex flex-col gap-2">
                                 {lessonSteps.map((step, index) => (
-                                    <button
+                                    <a
                                         key={index}
-                                        onClick={() => setCurrentStepIndex(index)}
+                                        href="#"
                                         className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                                            step.status === 'completed' ? 'bg-accent-green/10 text-accent-green' : ''
+                                            step.status === 'completed' ? 'bg-primary/10 text-primary' : ''
                                         } ${
                                             step.status === 'active' ? 'bg-primary/20 text-primary ring-2 ring-primary' : ''
                                         } ${
-                                            step.status === 'pending' ? 'opacity-60 hover:bg-border-light dark:hover:bg-border-dark' : ''
+                                            step.status === 'pending' ? 'opacity-60 hover:bg-gray-100 dark:hover:bg-gray-700' : ''
                                         }`}
                                     >
                                         <span className="material-symbols-outlined text-xl">
                                             {step.status === 'completed' ? 'check_circle' : step.status === 'active' ? 'play_circle' : 'radio_button_unchecked'}
                                         </span>
                                         <span className="font-medium text-sm">{step.name}</span>
-                                    </button>
+                                    </a>
                                 ))}
                             </nav>
                         </div>
-                        <div className="flex items-center gap-3 p-3 rounded-lg bg-background-light dark:bg-background-dark">
-                            <div className="size-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
-                                {userProfile.name.charAt(0)}
-                            </div>
+                        <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-100 dark:bg-gray-900/50">
+                            <div className="size-10 rounded-full bg-cover bg-center" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDRU3R3wfVXZmwCa6SWg4IUIOFZfME1ABbgRyTLoXmI4Y64GKTKSnZAwcQZ7jt9kH4gVmQDcvrgnGqbATVlRiMaUUh2-Q__RRDoR27F3tbVDHNDlWTqhsjLeaJOQ3Z08C1zNmHMSWZXP2H7coGn_Li7wSDtShm_Gk3fN_g7q1q7_fceRTmMgI2RaJxcn1fnVmsH5t6i_ksMlEd6EpWEajFDy8F5tXI2pJZk3iKEKsFoyvtL5VdWJWEQKQZT6lxvyFDWgfqBo10eSnU')" }}></div>
                             <div>
-                                <p className="font-bold text-sm">{userProfile.name}</p>
-                                <p className="text-xs text-text-light-secondary dark:text-text-dark-secondary">{userProfile.level}</p>
+                                <p className="font-bold text-sm">Alex Doe</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">Beginner Level</p>
                             </div>
                         </div>
                     </aside>
 
+                    {/* Main Content Area */}
                     <main className="flex-1 flex flex-col">
-                        <header className="flex items-center justify-between px-10 py-4 border-b border-border-light dark:border-border-dark">
-                            <h1 className="font-heading text-xl font-bold text-text-light dark:text-text-dark">Unit 5: Mastering Business Idioms</h1>
-                            <Link to="/" className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg hover:bg-border-light dark:hover:bg-border-dark">
+                        {/* Minimal Header */}
+                        <header className="flex items-center justify-between px-10 py-4 border-b border-gray-200 dark:border-gray-700">
+                            <h1 className="font-heading text-xl font-bold text-light-primary dark:text-dark-primary">Unit 5: Mastering Business Idioms</h1>
+                            <Link to="/" className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
                                 <span className="material-symbols-outlined text-xl">arrow_back</span>
                                 Back to Dashboard
                             </Link>
@@ -107,12 +81,13 @@ const CoreLearningScreen = () => {
 
                         <div className="flex-1 overflow-y-auto p-10">
                             <div className="max-w-4xl mx-auto">
+                                {/* Dynamic Content Placeholder */}
                                 <div className="mb-8">
-                                    <div className="relative flex items-center justify-center bg-card-dark bg-cover bg-center aspect-video rounded-xl overflow-hidden">
+                                    <div className="relative flex items-center justify-center bg-gray-900 bg-cover bg-center aspect-video rounded-xl" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCK-Wa0xW20K0wdkPLbRd8CrfMlmRt_I3cSQ_O2pWpAPYutQuPe2c4TVH4gI6h4i3kPA-X8ECBgHwHe9Jt4aXJyYcU45EUrYZP0fbiHvKRQadCNQmhyqtzGnVMsuXnr1IEAQuv_qhJhFp_dMIsHt8ESsQZ7L4mazTDYwv3plak9D1CuWgzuHgvBMUFnw7UovdUqiwGVL6egoDUYHLODokPHsCNIp-UDzLj3vK02a5idFQC1YxDtb06XXXKxArbSdw_jlYuDh_iURyA')" }}>
                                         <button className="flex shrink-0 items-center justify-center rounded-full size-20 bg-white/20 text-white backdrop-blur-sm transition-transform hover:scale-110">
                                             <span className="material-symbols-outlined text-5xl">play_arrow</span>
                                         </button>
-                                        <div className="absolute inset-x-0 bottom-0 px-6 py-4 bg-gradient-to-t from-black/60 to-transparent">
+                                        <div className="absolute inset-x-0 bottom-0 px-6 py-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="relative flex-1 h-1.5 bg-white/30 rounded-full">
                                                     <div className="absolute top-0 left-0 h-full w-1/3 bg-white rounded-full"></div>
@@ -128,57 +103,45 @@ const CoreLearningScreen = () => {
                                 </div>
 
                                 <div className="mb-8">
-                                    <h2 className="font-heading text-2xl font-bold mb-4">Comprehension Check</h2>
-                                    <p className="text-base text-text-light-secondary dark:text-text-dark-secondary mb-6">
-                                        Test your understanding of the business idioms covered in this lesson. Select the word that best completes each sentence.
-                                    </p>
-                                    
-                                    <div className="space-y-6">
-                                        {quizQuestions.map((q, index) => (
-                                            <div key={index} className="bg-card-light dark:bg-card-dark rounded-xl p-6">
-                                                <p className="font-medium text-lg mb-4">{q.question}</p>
-                                                <div className="grid grid-cols-2 gap-3">
-                                                    {q.options.map((option) => (
-                                                        <label
-                                                            key={option}
-                                                            className="flex items-center gap-3 p-3 rounded-lg border-2 border-border-light dark:border-border-dark cursor-pointer hover:border-primary transition-colors has-[:checked]:border-primary has-[:checked]:bg-primary/10 dark:has-[:checked]:bg-primary/20"
-                                                        >
-                                                            <input
-                                                                type="radio"
-                                                                name={`question-${index}`}
-                                                                value={option}
-                                                                onChange={(e) => setSelectedAnswer(e.target.value)}
-                                                                className="h-4 w-4 text-primary"
-                                                            />
-                                                            <span className="text-sm font-medium">{option}</span>
-                                                        </label>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
+                                    <p className="font-heading text-4xl font-bold text-light-primary dark:text-dark-primary leading-tight tracking-tight mb-2">Comprehension Check</p>
+                                    <p className="text-base text-gray-600 dark:text-gray-400">Let's see what you've learned. Choose the best option to complete the sentences below.</p>
                                 </div>
 
-                                <div className="flex items-center justify-between pt-6 border-t border-border-light dark:border-border-dark">
-                                    <button
-                                        onClick={handlePreviousStep}
-                                        disabled={currentStepIndex === 0}
-                                        className="flex items-center gap-2 px-6 py-3 rounded-lg bg-card-light dark:bg-card-dark hover:bg-border-light dark:hover:bg-border-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                    >
-                                        <span className="material-symbols-outlined">arrow_back</span>
-                                        Previous
-                                    </button>
-                                    <button
-                                        onClick={handleNextStep}
-                                        disabled={currentStepIndex === lessonSteps.length - 1}
-                                        className="flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                    >
-                                        Next
-                                        <span className="material-symbols-outlined">arrow_forward</span>
-                                    </button>
+                                {/* Embedded Quiz Container */}
+                                <div className="space-y-6">
+                                    {quizQuestions.map((quiz, index) => (
+                                        <div key={index} className="bg-card-light dark:bg-card-dark p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+                                            <p className="mb-4 font-medium">{quiz.question}</p>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                {quiz.options.map((option) => (
+                                                    <button
+                                                        key={option}
+                                                        onClick={() => setSelectedAnswer(option)}
+                                                        className={`text-left p-4 rounded-lg border transition ${
+                                                            selectedAnswer === option
+                                                                ? 'border-2 border-primary bg-primary/10 text-primary'
+                                                                : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
+                                                        }`}
+                                                    >
+                                                        {option}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>
+
+                        {/* Bottom Navigation Bar */}
+                        <footer className="flex items-center justify-between px-10 py-4 border-t border-gray-200 dark:border-gray-700 mt-auto bg-background-light dark:bg-background-dark">
+                            <button className="px-8 py-3 rounded-lg font-bold text-sm border-2 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                Previous
+                            </button>
+                            <button className="px-8 py-3 rounded-lg font-bold text-sm text-white bg-primary hover:bg-primary/90 transition-colors">
+                                Next
+                            </button>
+                        </footer>
                     </main>
                 </div>
             </div>

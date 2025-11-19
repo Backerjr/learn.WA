@@ -47,14 +47,14 @@ const QuizScreen = () => {
   };
 
   return (
-    <div className="font-display bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+    <div className="font-display bg-background-light dark:bg-background-dark text-light-primary dark:text-dark-primary">
       <div className="relative flex min-h-screen w-full flex-col items-center p-4 sm:p-6 md:p-8">
         <div className="w-full max-w-2xl">
           <header className="mb-8 w-full">
             <div className="flex items-center justify-between gap-4">
               <button
                 aria-label="Exit Quiz"
-                className="flex items-center justify-center rounded-full border border-border-light dark:border-border-dark p-2 text-text-light/80 hover:bg-border-light dark:text-text-dark/80 dark:hover:bg-border-dark"
+                className="flex items-center justify-center rounded-full border border-border-light dark:border-border-dark p-2 text-light-primary/80 hover:bg-border-light dark:text-dark-primary/80 dark:hover:bg-border-dark"
               >
                 <span className="material-symbols-outlined text-2xl">close</span>
               </button>
@@ -63,7 +63,7 @@ const QuizScreen = () => {
                   <div className="absolute left-0 top-0 h-full rounded-full bg-primary transition-all duration-300" style={{ width: `${progress}%` }}></div>
                 </div>
               </div>
-              <div className="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary">
+              <div className="text-sm font-medium text-light-secondary dark:text-dark-secondary">
                 Score: {score}/{totalQuestions}
               </div>
             </div>
@@ -79,10 +79,10 @@ const QuizScreen = () => {
                   {question.difficulty}
                 </span>
               </div>
-              <h1 className="font-heading mt-2 text-2xl font-bold leading-tight text-text-light dark:text-text-dark sm:text-3xl">
+              <h1 className="font-heading mt-2 text-2xl font-bold leading-tight text-light-primary dark:text-dark-primary sm:text-3xl">
                 {question.questionText}
               </h1>
-              <p className="mt-4 text-lg text-text-light/80 dark:text-text-dark/80">{question.sentence}</p>
+              <p className="mt-4 text-lg text-light-primary/80 dark:text-dark-primary/80">{question.sentence}</p>
 
               <div className="mt-8 flex flex-col gap-3">
                 {question.options.map((option) => (
@@ -108,7 +108,7 @@ const QuizScreen = () => {
             <footer className="mt-8 flex w-full flex-col-reverse items-center justify-between gap-4 sm:flex-row">
               <button 
                 onClick={skipQuestion} 
-                className="font-bold text-text-light-secondary dark:text-text-dark-secondary transition-colors hover:text-primary"
+                className="font-bold text-light-secondary dark:text-dark-secondary transition-colors hover:text-primary"
                 disabled={showFeedback !== null}
               >
                 Skip
@@ -131,7 +131,7 @@ const QuizScreen = () => {
                             <span className="material-symbols-outlined text-2xl font-bold text-accent-green">check_circle</span>
                             <h2 className="font-heading text-2xl font-bold text-accent-green">Correct!</h2>
                         </div>
-                        <p className="mt-1 text-text-light dark:text-text-dark">{question.explanation}</p>
+                        <p className="mt-1 text-light-primary dark:text-dark-primary">{question.explanation}</p>
                     </div>
                     <button 
                       onClick={nextQuestion} 
@@ -151,7 +151,7 @@ const QuizScreen = () => {
                             <span className="material-symbols-outlined text-2xl font-bold text-primary">cancel</span>
                             <h2 className="font-heading text-2xl font-bold text-primary">Nice try!</h2>
                         </div>
-                        <p className="mt-1 text-text-light dark:text-text-dark">{question.explanation}</p>
+                        <p className="mt-1 text-light-primary dark:text-dark-primary">{question.explanation}</p>
                     </div>
                     <button 
                       onClick={nextQuestion} 

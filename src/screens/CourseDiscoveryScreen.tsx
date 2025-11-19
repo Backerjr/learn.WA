@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getClasses, EnglishClass } from '../services/api';
 
@@ -140,7 +140,7 @@ const CourseDiscoveryScreen = () => {
                         <div className="relative flex flex-col items-center gap-8 pt-8">
                             {/* Dashed line connector */}
                             <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 border-l-2 border-dashed border-gray-300"></div>
-                            {courses.map((course, index) => (
+                            {courses.map((course) => (
                                 <div key={course.id} className="relative z-[1] flex w-full max-w-lg flex-col overflow-hidden rounded-xl bg-white shadow-lg transition-all hover:shadow-xl sm:flex-row">
                                     <div className="h-48 w-full bg-gradient-to-br from-brand-teal to-brand-coral sm:h-auto sm:w-48 flex items-center justify-center">
                                         <span className="material-symbols-outlined text-white text-6xl">school</span>
