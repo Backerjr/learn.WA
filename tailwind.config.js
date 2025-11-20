@@ -22,6 +22,11 @@ export default {
         "accent-green": "#000000", // Changed to black for consistency
         "accent-orange": "#000000", // Changed to black for consistency
         
+        // Holographic Palette for LandingPortal
+        'space-black': '#000000',
+        'neon-teal': '#00FFC6',
+        'holo-silver': '#E0E0E0',
+        
         // Additional editorial colors
         "zinc": {
           50: "#FAFAFA",
@@ -41,6 +46,9 @@ export default {
         "display": ["Inter", "system-ui", "-apple-system", "sans-serif"], // Clean sans for UI
         "heading": ["ui-serif", "Georgia", "Cambria", "Times New Roman", "serif"], // Serif for headings
         "body": ["Inter", "system-ui", "-apple-system", "sans-serif"], // Sans for body
+        // Custom Fonts for LandingPortal
+        editorial: ['"Playfair Display"', 'Georgia', 'serif'], 
+        data: ['Inter', 'ui-sans-serif', 'system-ui'],
       },
       borderRadius: {
         // Sharp, editorial feel
@@ -84,12 +92,30 @@ export default {
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-in-out',
+        pulseNeon: 'pulseNeon 4s infinite ease-in-out',
       },
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0', transform: 'translateY(10px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
+        // Animation for the "Holographic" Pulse
+        pulseNeon: {
+          '0%, 100%': { opacity: 1, textShadow: '0 0 2px rgba(0, 255, 198, 0.8)' },
+          '50%': { opacity: 0.8, textShadow: '0 0 10px rgba(0, 255, 198, 1)' },
+        },
+      },
+      backgroundColor: {
+        'glass': 'rgba(255, 255, 255, 0.05)',
+      },
+      borderColor: {
+        'glass-border': 'rgba(255, 255, 255, 0.1)',
+      },
+      boxShadow: {
+        'glass-glow': '0 0 15px rgba(0, 255, 198, 0.5), 0 0 5px rgba(0, 255, 198, 0.2)',
+      },
+      backdropBlur: {
+        'glass': '10px',
       },
     },
   },
