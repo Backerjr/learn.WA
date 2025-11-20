@@ -1,8 +1,9 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState, useCallback } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { MeshDistortMaterial } from '@react-three/drei';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import type { Mesh } from 'three';
 
 // --- 3D Scene Components ---
 
@@ -11,7 +12,7 @@ import { motion } from 'framer-motion';
  * Uses MeshDistortMaterial for a fluid, organic look.
  */
 const FluidBackground = () => {
-  const meshRef = useRef();
+  const meshRef = useRef<Mesh>(null);
 
   useFrame(({ clock }) => {
     // Subtle rotation and distortion change over time
@@ -37,19 +38,7 @@ const FluidBackground = () => {
 
 // --- HTML Overlay and Interaction ---
 
-const PortalOverlay = ({ startZoom, loading }) => {
-  const navigate = useNavigate();
-
-  const handleInteraction = () => {
-    if (!loading) {
-      startZoom();
-      // Navigate after the zoom animation is complete (approx 1.5s)
-      setTimeout(() => {
-        navigate('/dashboard'); 
-      }, 1500);
-    }
-  };
-
+const PortalOverlay = ({ handleInteraction, loading }: { handleInteraction: () => void; loading: boolean }) => {
   return (
     <div className="absolute inset-0 z-10 pointer-events-none">
       {/* The Colossal Monolith Letter 'A' */}
@@ -88,21 +77,31 @@ const PortalOverlay = ({ startZoom, loading }) => {
 
 const LandingPortal = () => {
   const [loading, setLoading] = useState(false);
-  const [zoomScale, setZoomScale] = useState(1);
+  const navigate = useNavigate();
 
-  const startZoom = () => {
-    setLoading(true);
-    // Use Framer Motion style animation on a hidden element to drive the scale change
-    // This provides the smooth, controlled zoom/transition effect.
-    return {
-      scale: [1, 50],
-      opacity: [1, 0],
+  const handleInteraction = useCallback(() => {
+    if (!loading) {
+      setLoading(true);
+      // Navigate after the zoom animation is complete (approx 1.5s)
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
+    }
+  }, [loading, navigate]);
+
+  const zoomVariants = {
+    initial: {
+      scale: 1,
+      opacity: 1,
+    },
+    zoom: {
+      scale: 50,
+      opacity: 0,
       transition: {
         duration: 1.5,
-        ease: "easeInOut",
+        ease: [0.42, 0, 0.58, 1] as const, // Cubic bezier for easeInOut
       },
-      onComplete: () => console.log('Zoom complete')
-    };
+    },
   };
 
   return (
@@ -110,7 +109,9 @@ const LandingPortal = () => {
       {/* Framer Motion wrapper for the zoom effect */}
       <motion.div
         className="h-full w-full"
-        animate={loading ? startZoom() : {}}
+        variants={zoomVariants}
+        initial="initial"
+        animate={loading ? 'zoom' : 'initial'}
       >
         <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
           <ambientLight intensity={0.5} />
@@ -121,7 +122,7 @@ const LandingPortal = () => {
       </motion.div>
 
       {/* HTML Interface Overlay */}
-      <PortalOverlay startZoom={startZoom} loading={loading} />
+      <PortalOverlay handleInteraction={handleInteraction} loading={loading} />
     </div>
   );
 };
