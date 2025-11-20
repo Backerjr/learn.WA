@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const UserProfileScreen = () => {
     const [activeTab, setActiveTab] = useState('Profile');

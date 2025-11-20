@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLearning } from '@/contexts/LearningContext';
 import { getClasses, EnglishClass } from '@/services/api';

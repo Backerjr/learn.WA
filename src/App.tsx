@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { LearningContext } from './contexts/LearningContext';
 
 // Import NEW Screens
 import LandingPortal from './screens/LandingPortal';
@@ -22,8 +23,7 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Assuming LearningContext is defined elsewhere or will be re-added */}
-      {/* <LearningContext> */}
+      <LearningContext>
         <div className="dark">
           <Router>
             <Routes>
@@ -45,7 +45,7 @@ function App() {
             </Routes>
           </Router>
         </div>
-      {/* </LearningContext> */}
+      </LearningContext>
     </QueryClientProvider>
   );
 }
