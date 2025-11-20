@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { QuizLibrary as QuizStore, Quiz } from '@/services/bank';
 
@@ -11,15 +11,15 @@ const QuizLibrary: React.FC = () => {
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
 
-  useEffect(() => {
-    refreshLibrary();
+  const refreshLibrary = useCallback(() => {
+    setQuizzes(QuizStore.getAll());
   }, []);
 
-  const refreshLibrary = () => {
-    setQuizzes(QuizStore.getAll());
-  };
+  useEffect(() => {
+    refreshLibrary();
+  }, [refreshLibrary]);
 
-  const handleDelete = (id: string) => {
+  const handleDelete = useCallback((id: string) => {
     if (confirm('Delete this quiz? This action cannot be undone.')) {
       QuizStore.remove(id);
       refreshLibrary();
@@ -27,15 +27,21 @@ const QuizLibrary: React.FC = () => {
         setSelectedQuiz(null);
       }
     }
-  };
+  }, [refreshLibrary, selectedQuiz]);
 
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    }).format(date);
-  };
+  const dateFormatter = useMemo(() => new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  }), []);
+
+  const formatDate = useCallback((date: Date) => dateFormatter.format(date), [dateFormatter]);
+
+  const handleSelectQuiz = useCallback((quiz: Quiz) => {
+    setSelectedQuiz(quiz);
+  }, []);
+
+  const clearSelection = useCallback(() => setSelectedQuiz(null), []);
 
   return (
     <div className="min-h-screen bg-background-light dark:bg-background-dark">
@@ -99,7 +105,7 @@ const QuizLibrary: React.FC = () => {
                 <div
                   key={quiz.id}
                   className="group cursor-pointer"
-                  onClick={() => setSelectedQuiz(quiz)}
+                  onClick={() => handleSelectQuiz(quiz)}
                 >
                   {/* Cover Card */}
                   <div 
@@ -189,7 +195,7 @@ const QuizLibrary: React.FC = () => {
                 </p>
               </div>
               <button
-                onClick={() => setSelectedQuiz(null)}
+                onClick={clearSelection}
                 className="text-light-secondary dark:text-dark-secondary hover:text-light-primary dark:hover:text-dark-primary transition-colors"
               >
                 <span className="material-symbols-outlined text-3xl">close</span>

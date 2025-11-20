@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useLearning } from '@/contexts/LearningContext';
 import { getClasses, EnglishClass } from '@/services/api';
@@ -22,19 +22,19 @@ const MissionControlScreen = () => {
         fetchClasses();
     }, []);
 
-    const stats = {
+    const stats = useMemo(() => ({
         wordsLearned: 540,
         lessonsCompleted: 72,
         hoursPracticed: 28,
-    };
+    }), []);
 
-    const dailyGoal = {
+    const dailyGoal = useMemo(() => ({
         current: 150,
         total: 200,
         streak: 3,
-    };
+    }), []);
 
-    const announcements = [
+    const announcements = useMemo(() => ([
         {
             title: 'New Feature: Speaking Practice!',
             description: 'Practice your pronunciation with our new AI tool.',
@@ -47,7 +47,7 @@ const MissionControlScreen = () => {
             title: 'Scheduled Maintenance',
             description: 'A short downtime is expected this Sunday.',
         },
-    ];
+    ]), []);
 
     return (
         <div className="bg-background-light dark:bg-background-dark font-display text-light-primary dark:text-dark-primary">

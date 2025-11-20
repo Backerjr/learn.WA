@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 const ResourceLibraryScreen = () => {
-    const resources = [
+    const resources = useMemo(() => [
         {
             title: "Pronunciation Practice: 'TH' Sound",
             type: "Audio - Drills and exercises to perfect your pronunciation.",
@@ -52,7 +52,7 @@ const ResourceLibraryScreen = () => {
             imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuDY9LoGL-Xptld2aUyKOzXSdIfYCjJPxBqIq4FMhDNeVUoT9aXlgKJGyKKL--3kb5YqFKXLtvZ5b4JgJFX1YowtSNUZ4B6art9B2nrkRF9lYu3yN5RrwcG-tlDaPmEZiGWmOWy-E_ZaCHsdhXu9iJ5UgawMcT63cI8fp6lZkDYW0zOFHgalEmZ7UjVuWaDvdHsFyZEx0eFV7HIQHhy9QhKI_9ut6_6maSWkL8DQDk1R0UAvxYVnfjFzvInNcaoa_RYmgQMZUR42GtY",
             gridSpan: 'col-span-2'
         },
-    ];
+    ], []);
 
     return (
         <div className="bg-background-light dark:bg-background-dark font-display text-light-primary dark:text-dark-primary">

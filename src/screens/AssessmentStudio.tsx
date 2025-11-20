@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { generateMockBatch, Question } from '@/services/ai';
 import { QuestionBank, QuizLibrary } from '@/services/bank';
@@ -21,15 +21,15 @@ const AssessmentStudio: React.FC = () => {
   const [sparkleAnimation, setSparkleAnimation] = useState(false);
   const [saveNotification, setSaveNotification] = useState<string | null>(null);
 
-  useEffect(() => {
-    refreshBank();
+  const refreshBank = useCallback(() => {
+    setBankItems(QuestionBank.getAll());
   }, []);
 
-  const refreshBank = () => {
-    setBankItems(QuestionBank.getAll());
-  };
+  useEffect(() => {
+    refreshBank();
+  }, [refreshBank]);
 
-  const handleGenerate = async () => {
+  const handleGenerate = useCallback(async () => {
     if (!topic.trim()) return;
 
     setView('generating');
@@ -43,20 +43,24 @@ const AssessmentStudio: React.FC = () => {
     setGeneratedItems(batch);
     setView('factory');
     setSparkleAnimation(false);
-  };
+  }, [topic, count]);
 
-  const toggleSelection = (id: string) => {
-    const newSelection = new Set(selectedIds);
-    if (newSelection.has(id)) {
-      newSelection.delete(id);
-    } else {
-      newSelection.add(id);
-    }
-    setSelectedIds(newSelection);
-  };
+  const toggleSelection = useCallback((id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }, []);
 
-  const handleAddToBank = () => {
+  const handleAddToBank = useCallback(() => {
     const selected = generatedItems.filter(item => selectedIds.has(item.id));
+    if (selected.length === 0) return;
+
     QuestionBank.saveBatch(selected);
     refreshBank();
     
@@ -64,9 +68,9 @@ const AssessmentStudio: React.FC = () => {
     setTimeout(() => setSaveNotification(null), 3000);
     
     setSelectedIds(new Set());
-  };
+  }, [generatedItems, selectedIds, refreshBank]);
 
-  const handleSaveAsQuiz = () => {
+  const handleSaveAsQuiz = useCallback(() => {
     const selected = generatedItems.filter(item => selectedIds.has(item.id));
     
     if (selected.length === 0) return;
@@ -80,13 +84,13 @@ const AssessmentStudio: React.FC = () => {
     setTimeout(() => setSaveNotification(null), 3000);
     
     setSelectedIds(new Set());
-  };
+  }, [generatedItems, selectedIds, topic]);
 
-  const filteredBank = searchQuery
-    ? QuestionBank.search(searchQuery)
-    : bankItems;
+  const filteredBank = useMemo(() => (
+    searchQuery ? QuestionBank.search(searchQuery) : bankItems
+  ), [searchQuery, bankItems]);
 
-  const selectedCount = selectedIds.size;
+  const selectedCount = useMemo(() => selectedIds.size, [selectedIds]);
 
   return (
     <div className="min-h-screen bg-background-light dark:bg-background-dark">

@@ -6,8 +6,17 @@ __pycache__/
 node_modules/
 dist/
 .env
+.env.*
 
 # Database
 *.db
 *.sqlite
 *.sqlite3
+
+# Python virtual envs
+venv/
+.venv/
+
+# Secrets/keys
+*.pem
+*.key
