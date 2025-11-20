@@ -80,14 +80,17 @@ const LandingPortal = () => {
   const navigate = useNavigate();
 
   const handleInteraction = useCallback(() => {
-    if (!loading) {
-      setLoading(true);
-      // Navigate after the zoom animation is complete (approx 1.5s)
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 1500);
-    }
-  }, [loading, navigate]);
+    setLoading((prev) => {
+      if (!prev) {
+        // Navigate after the zoom animation is complete (approx 1.5s)
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500);
+        return true;
+      }
+      return prev;
+    });
+  }, [navigate]);
 
   const zoomVariants = {
     initial: {
