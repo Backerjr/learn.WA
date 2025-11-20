@@ -53,8 +53,17 @@ async function apiCall<T>(
     });
 
     if (!response.ok) {
-      const error: ApiError = await response.json();
-      throw new Error(error.error || `API Error: ${response.status}`);
+      // Check if response is JSON before parsing
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const error: ApiError = await response.json();
+        throw new Error(error.error || `API Error: ${response.status}`);
+      } else {
+        // Log HTML error for debugging
+        const text = await response.text();
+        console.error(`API returned non-JSON response (${response.status}):`, text.substring(0, 200));
+        throw new Error(`API Error: ${response.status} - Expected JSON but received HTML`);
+      }
     }
 
     return await response.json();

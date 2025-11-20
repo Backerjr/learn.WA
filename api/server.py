@@ -26,6 +26,17 @@ CORS(app)
 # Initialize database on startup
 init_db()
 
+# Global error handlers to ensure JSON responses
+@app.errorhandler(404)
+def not_found(error):
+    """Return JSON for 404 errors instead of HTML"""
+    return jsonify({"error": "Endpoint not found", "status": 404}), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    """Return JSON for 500 errors instead of HTML"""
+    return jsonify({"error": "Internal server error", "status": 500}), 500
+
 @app.route('/api/health', methods=['GET'])
 def health_check():
     """Health check endpoint"""
