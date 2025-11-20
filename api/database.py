@@ -64,6 +64,32 @@ def init_db():
             )
         """)
         
+        # Quizzes table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS quizzes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                topic TEXT,
+                difficulty TEXT DEFAULT 'intermediate',
+                focus_mode TEXT DEFAULT 'comprehension',
+                metadata TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        
+        # Questions table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS questions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                quiz_id INTEGER NOT NULL,
+                text TEXT NOT NULL,
+                options TEXT NOT NULL,
+                correct_answer TEXT NOT NULL,
+                explanation TEXT,
+                FOREIGN KEY (quiz_id) REFERENCES quizzes (id) ON DELETE CASCADE
+            )
+        """)
+        
         conn.commit()
 
 def create_class(class_data: Dict) -> int:
@@ -186,3 +212,77 @@ def get_class_students(class_id: int) -> List[Dict]:
         
         rows = cursor.fetchall()
         return [dict(row) for row in rows]
+
+def create_quiz(quiz_data: Dict) -> int:
+    """Create a new quiz with questions"""
+    with get_db() as conn:
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            INSERT INTO quizzes (title, topic, difficulty, focus_mode, metadata)
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            quiz_data['title'],
+            quiz_data.get('topic', ''),
+            quiz_data.get('difficulty', 'intermediate'),
+            quiz_data.get('focus_mode', 'comprehension'),
+            json.dumps(quiz_data.get('metadata', {}))
+        ))
+        
+        quiz_id = cursor.lastrowid
+        
+        for question in quiz_data['questions']:
+            cursor.execute("""
+                INSERT INTO questions (quiz_id, text, options, correct_answer, explanation)
+                VALUES (?, ?, ?, ?, ?)
+            """, (
+                quiz_id,
+                question['question'],
+                json.dumps(question['options']),
+                question['correct_answer'],
+                question.get('explanation', '')
+            ))
+        
+        return quiz_id
+
+def get_all_quizzes() -> List[Dict]:
+    """Get all quizzes (summary view)"""
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT q.id, q.title, q.topic, q.difficulty, q.focus_mode, q.created_at,
+                   COUNT(qu.id) as question_count
+            FROM quizzes q
+            LEFT JOIN questions qu ON q.id = qu.quiz_id
+            GROUP BY q.id
+            ORDER BY q.created_at DESC
+        """)
+        
+        rows = cursor.fetchall()
+        return [dict(row) for row in rows]
+
+def get_quiz(quiz_id: int) -> Optional[Dict]:
+    """Get a specific quiz with all questions"""
+    with get_db() as conn:
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT * FROM quizzes WHERE id = ?", (quiz_id,))
+        quiz_row = cursor.fetchone()
+        
+        if not quiz_row:
+            return None
+        
+        quiz = dict(quiz_row)
+        quiz['metadata'] = json.loads(quiz['metadata']) if quiz['metadata'] else {}
+        
+        cursor.execute("SELECT * FROM questions WHERE quiz_id = ? ORDER BY id", (quiz_id,))
+        question_rows = cursor.fetchall()
+        
+        questions = []
+        for row in question_rows:
+            q = dict(row)
+            q['options'] = json.loads(q['options'])
+            questions.append(q)
+        
+        quiz['questions'] = questions
+        return quiz

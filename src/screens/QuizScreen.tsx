@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { quizQuestions, QuizQuestion } from '@/mocks/quizQuestions';
 
 const QuizScreen = () => {
@@ -7,6 +8,16 @@ const QuizScreen = () => {
   const [showFeedback, setShowFeedback] = useState<null | 'correct' | 'incorrect'>(null);
   const [score, setScore] = useState(0);
   const [answeredQuestions, setAnsweredQuestions] = useState<number[]>([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Reset state when component mounts
+    setCurrentQuestionIndex(0);
+    setSelectedOption(null);
+    setShowFeedback(null);
+    setScore(0);
+    setAnsweredQuestions([]);
+  }, []);
 
   const question: QuizQuestion = quizQuestions[currentQuestionIndex];
   const totalQuestions = quizQuestions.length;
@@ -16,12 +27,19 @@ const QuizScreen = () => {
     setSelectedOption(e.target.value);
   };
 
+  const handleBackNavigation = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    const confirmation = window.confirm('Are you sure you want to leave? Your progress will be lost.');
+    if (!confirmation) {
+      event.preventDefault();
+    }
+  };
+
   const checkAnswer = () => {
     if (!selectedOption) return;
-    
+
     const isCorrect = selectedOption === question.correctAnswer;
     setShowFeedback(isCorrect ? 'correct' : 'incorrect');
-    
+
     if (isCorrect && !answeredQuestions.includes(currentQuestionIndex)) {
       setScore(score + 1);
       setAnsweredQuestions([...answeredQuestions, currentQuestionIndex]);
@@ -52,12 +70,14 @@ const QuizScreen = () => {
         <div className="w-full max-w-2xl">
           <header className="mb-8 w-full">
             <div className="flex items-center justify-between gap-4">
-              <button
-                aria-label="Exit Quiz"
-                className="flex items-center justify-center rounded-full border border-border-light dark:border-border-dark p-2 text-light-primary/80 hover:bg-border-light dark:text-dark-primary/80 dark:hover:bg-border-dark"
+              <Link
+                to="/"
+                onClick={handleBackNavigation}
+                className="flex items-center gap-2 text-light-secondary dark:text-dark-secondary hover:text-primary dark:hover:text-dark-primary transition-colors"
               >
-                <span className="material-symbols-outlined text-2xl">close</span>
-              </button>
+                <span className="material-symbols-outlined">arrow_back</span>
+                <span>Back to Mission Control</span>
+              </Link>
               <div className="flex-grow">
                 <div className="relative h-3 w-full overflow-hidden rounded-full bg-border-light dark:bg-border-dark">
                   <div className="absolute left-0 top-0 h-full rounded-full bg-primary transition-all duration-300" style={{ width: `${progress}%` }}></div>
@@ -106,15 +126,15 @@ const QuizScreen = () => {
             </div>
 
             <footer className="mt-8 flex w-full flex-col-reverse items-center justify-between gap-4 sm:flex-row">
-              <button 
-                onClick={skipQuestion} 
+              <button
+                onClick={skipQuestion}
                 className="font-bold text-light-secondary dark:text-dark-secondary transition-colors hover:text-primary"
                 disabled={showFeedback !== null}
               >
                 Skip
               </button>
-              <button 
-                onClick={checkAnswer} 
+              <button
+                onClick={checkAnswer}
                 className="w-full rounded-full bg-primary px-8 py-4 text-lg font-bold text-white shadow-lg shadow-primary/30 transition-transform duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
                 disabled={!selectedOption || showFeedback !== null}
               >
@@ -133,8 +153,8 @@ const QuizScreen = () => {
                         </div>
                         <p className="mt-1 text-light-primary dark:text-dark-primary">{question.explanation}</p>
                     </div>
-                    <button 
-                      onClick={nextQuestion} 
+                    <button
+                      onClick={nextQuestion}
                       className="w-full flex-shrink-0 rounded-full bg-accent-green px-8 py-3 font-bold text-white transition-transform duration-200 hover:scale-105 sm:w-auto"
                     >
                       {currentQuestionIndex < totalQuestions - 1 ? 'Next' : 'Finish'}
@@ -153,8 +173,8 @@ const QuizScreen = () => {
                         </div>
                         <p className="mt-1 text-light-primary dark:text-dark-primary">{question.explanation}</p>
                     </div>
-                    <button 
-                      onClick={nextQuestion} 
+                    <button
+                      onClick={nextQuestion}
                       className="w-full flex-shrink-0 rounded-full bg-primary px-8 py-3 font-bold text-white transition-transform duration-200 hover:scale-105 sm:w-auto"
                     >
                       {currentQuestionIndex < totalQuestions - 1 ? 'Next' : 'Finish'}
