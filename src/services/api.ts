@@ -53,20 +53,27 @@ async function apiCall<T>(
     });
 
     if (!response.ok) {
-      // Check if response is JSON before parsing
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        const error: ApiError = await response.json();
-        throw new Error(error.error || `API Error: ${response.status}`);
-      } else {
-        // Log HTML error for debugging
-        const text = await response.text();
-        console.error(`API returned non-JSON response (${response.status}):`, text.substring(0, 200));
-        throw new Error(`API Error: ${response.status} - Expected JSON but received HTML`);
-      }
+      const errorText = await response.text();
+      console.error(`API request to ${endpoint} failed (${response.status}):`, errorText.substring(0, 200));
+      throw new Error(`API Error: ${response.status}`);
     }
 
-    return await response.json();
+    const contentType = response.headers.get('content-type') || '';
+    const rawBody = await response.text();
+    const isJson = contentType.includes('application/json');
+
+    if (!isJson) {
+      console.error(`API returned non-JSON response (${response.status}):`, rawBody.substring(0, 200));
+      throw new Error(`API Error: ${response.status} - Unexpected response format`);
+    }
+
+    try {
+      const parsedBody = JSON.parse(rawBody) as T;
+      return parsedBody;
+    } catch (parseError) {
+      console.error('Failed to parse JSON response:', rawBody.substring(0, 200));
+      throw new Error('API returned invalid JSON');
+    }
   } catch (error) {
     if (error instanceof Error) {
       throw error;

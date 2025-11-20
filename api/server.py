@@ -3,6 +3,7 @@
 Flask REST API for Learn.WA English Classes
 Provides endpoints for managing classes, students, and enrollments with SQLite persistence
 """
+from functools import wraps
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import sys
@@ -21,7 +22,24 @@ from database import (
 )
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+
+def json_error_response(message, status_code=500):
+    """Return a JSON error response with a specific status code"""
+    return jsonify({"error": message, "status": status_code}), status_code
+
+
+def with_error_handling(func):
+    """Decorator to ensure all routes return JSON on unexpected errors"""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as exc:  # pylint: disable=broad-except
+            print(f"Unhandled error in {func.__name__}: {exc}", file=sys.stderr)
+            return json_error_response("Internal server error", 500)
+    return wrapper
 
 # Initialize database on startup
 init_db()
@@ -30,24 +48,27 @@ init_db()
 @app.errorhandler(404)
 def not_found(error):
     """Return JSON for 404 errors instead of HTML"""
-    return jsonify({"error": "Endpoint not found", "status": 404}), 404
+    return json_error_response("Endpoint not found", 404)
 
 @app.errorhandler(500)
 def internal_error(error):
     """Return JSON for 500 errors instead of HTML"""
-    return jsonify({"error": "Internal server error", "status": 500}), 500
+    return json_error_response("Internal server error", 500)
 
 @app.route('/api/health', methods=['GET'])
+@with_error_handling
 def health_check():
     """Health check endpoint"""
     return jsonify({"status": "ok", "message": "Learn.WA API is running with SQLite"})
 
 @app.route('/api/levels', methods=['GET'])
+@with_error_handling
 def get_levels():
     """Get valid class levels"""
     return jsonify({"levels": VALID_LEVELS})
 
 @app.route('/api/classes', methods=['GET'])
+@with_error_handling
 def get_classes():
     """Get all classes with optional filtering"""
     level = request.args.get('level')
@@ -57,6 +78,7 @@ def get_classes():
     return jsonify(classes)
 
 @app.route('/api/classes/<int:class_id>', methods=['GET'])
+@with_error_handling
 def get_class(class_id):
     """Get a specific class by ID"""
     class_obj = get_class_by_id(class_id)
@@ -67,6 +89,7 @@ def get_class(class_id):
     return jsonify(class_obj)
 
 @app.route('/api/classes', methods=['POST'])
+@with_error_handling
 def create_class():
     """Create a new class"""
     data = request.json
@@ -102,6 +125,7 @@ def create_class():
         return jsonify({"error": str(e)}), 400
 
 @app.route('/api/classes/bulk', methods=['POST'])
+@with_error_handling
 def bulk_create_classes():
     """Create multiple classes at once"""
     data = request.json
@@ -143,6 +167,7 @@ def bulk_create_classes():
     }), 201
 
 @app.route('/api/classes/<int:class_id>/enroll', methods=['POST'])
+@with_error_handling
 def enroll_student_endpoint(class_id):
     """Enroll a student in a class"""
     data = request.json
@@ -164,6 +189,7 @@ def enroll_student_endpoint(class_id):
         return jsonify({"error": str(e)}), 400
 
 @app.route('/api/classes/<int:class_id>/students', methods=['GET'])
+@with_error_handling
 def get_enrolled_students(class_id):
     """Get all students enrolled in a class"""
     class_obj = get_class_by_id(class_id)
@@ -180,6 +206,7 @@ def get_enrolled_students(class_id):
     })
 
 @app.route('/api/quizzes', methods=['POST'])
+@with_error_handling
 def create_quiz_endpoint():
     """Create a new quiz"""
     data = request.json
@@ -192,12 +219,14 @@ def create_quiz_endpoint():
         return jsonify({"error": str(e)}), 400
 
 @app.route('/api/quizzes', methods=['GET'])
+@with_error_handling
 def get_quizzes():
     """Get all quizzes"""
     quizzes = get_all_quizzes()
     return jsonify(quizzes)
 
 @app.route('/api/quizzes/<int:quiz_id>', methods=['GET'])
+@with_error_handling
 def get_quiz_endpoint(quiz_id):
     """Get a specific quiz with questions"""
     quiz = get_quiz(quiz_id)

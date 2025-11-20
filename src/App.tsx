@@ -12,6 +12,7 @@ import CoreLearningScreen from './screens/CoreLearningScreen';
 import UserProfileScreen from './screens/UserProfileScreen';
 import CourseDiscoveryScreen from './screens/CourseDiscoveryScreen';
 import ResourceLibraryScreen from './screens/ResourceLibraryScreen';
+import AIQuizCreatorScreen from './screens/AIQuizCreator';
 
 // Placeholder Screens (to prevent crashes on missing links)
 const TeacherDashboardScreen = () => <div className="p-10 text-white bg-space-black h-screen font-data">Teacher Mode Dashboard - Building the Constellation Map...</div>;
@@ -36,6 +37,7 @@ function App() {
               <Route path="/courses" element={<CourseDiscoveryScreen />} />
               <Route path="/profile" element={<UserProfileScreen />} />
               <Route path="/library" element={<ResourceLibraryScreen />} />
+              <Route path="/studio" element={<AIQuizCreatorScreen />} />
               
               {/* NAVIGATION FIXES */}
               <Route path="/quiz" element={<QuizScreen />} />
