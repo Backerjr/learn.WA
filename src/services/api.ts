@@ -154,66 +154,6 @@ export async function bulkCreateClasses(
   });
 }
 
-// Quiz Types
-export interface Quiz {
-  id: number;
-  title: string;
-  topic: string;
-  difficulty: string;
-  focus_mode: string;
-  question_count?: number;
-  created_at: string;
-  questions?: QuizQuestion[];
-  metadata?: any;
-}
-
-export interface QuizQuestion {
-  id: number;
-  quiz_id: number;
-  text: string;
-  options: string[];
-  correct_answer: string;
-  explanation?: string;
-}
-
-export interface CreateQuizRequest {
-  title: string;
-  topic?: string;
-  difficulty?: string;
-  focus_mode?: string;
-  metadata?: any;
-  questions: {
-    question: string;
-    options: string[];
-    correct_answer: string;
-    explanation?: string;
-  }[];
-}
-
-/**
- * Create a new quiz
- */
-export async function createQuiz(quizData: CreateQuizRequest): Promise<Quiz> {
-  return apiCall('/quizzes', {
-    method: 'POST',
-    body: JSON.stringify(quizData),
-  });
-}
-
-/**
- * Get all quizzes (summary)
- */
-export async function getQuizzes(): Promise<Quiz[]> {
-  return apiCall('/quizzes');
-}
-
-/**
- * Get a specific quiz with questions
- */
-export async function getQuiz(quizId: number): Promise<Quiz> {
-  return apiCall(`/quizzes/${quizId}`);
-}
-
 export default {
   checkHealth,
   getClasses,
@@ -223,7 +163,4 @@ export default {
   getClassStudents,
   getLevels,
   bulkCreateClasses,
-  createQuiz,
-  getQuizzes,
-  getQuiz,
 };
