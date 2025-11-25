@@ -65,7 +65,7 @@ def health_check():
 @with_error_handling
 def get_levels():
     """Get valid class levels"""
-    return jsonify({"levels": VALID_LEVELS})
+    return jsonify({"levels": sorted(list(VALID_LEVELS))})
 
 @app.route('/api/classes', methods=['GET'])
 @with_error_handling

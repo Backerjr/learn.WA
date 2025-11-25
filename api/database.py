@@ -92,6 +92,16 @@ def init_db():
         
         conn.commit()
 
+def serialize_class_row(row: sqlite3.Row) -> Dict:
+    """Normalize database row to API-friendly shape"""
+    class_dict = dict(row)
+    class_dict['days'] = json.loads(class_dict.get('days', '[]'))
+    class_dict['enrolled'] = class_dict.get('enrolled_count', 0)
+    # Provide consistent optional fields for frontend consumers
+    class_dict.setdefault('syllabus', [])
+    class_dict.setdefault('students', [])
+    return class_dict
+
 def create_class(class_data: Dict) -> int:
     """Create a new class"""
     with get_db() as conn:
@@ -134,9 +144,7 @@ def get_all_classes(level: Optional[str] = None, teacher: Optional[str] = None) 
         
         classes = []
         for row in rows:
-            class_dict = dict(row)
-            class_dict['days'] = json.loads(class_dict['days'])
-            classes.append(class_dict)
+            classes.append(serialize_class_row(row))
         
         return classes
 
@@ -148,9 +156,7 @@ def get_class_by_id(class_id: int) -> Optional[Dict]:
         row = cursor.fetchone()
         
         if row:
-            class_dict = dict(row)
-            class_dict['days'] = json.loads(class_dict['days'])
-            return class_dict
+            return serialize_class_row(row)
         
         return None
 

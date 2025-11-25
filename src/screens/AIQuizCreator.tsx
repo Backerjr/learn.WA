@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { generateQuiz, validateQuizInput, GeneratedQuiz, FocusMode, DifficultyLevel } from '@/services/ai';
+import { generateQuiz, validateQuizInput, GeneratedQuiz, FocusMode, DifficultyLevel, Question } from '@/services/ai';
+import { QuizLibrary as QuizStore } from '@/services/bank';
 
 /**
  * Context-Aware Assessment Engine
@@ -71,7 +72,29 @@ const AIQuizCreator: React.FC = () => {
   };
 
   const handleSaveToLibrary = () => {
-    console.log('Saving to class library:', generatedQuiz);
+    if (!generatedQuiz) return;
+
+    const mappedQuestions: Question[] = generatedQuiz.questions.map((q) => ({
+      id: `${q.id}-${Date.now()}`,
+      text: q.question,
+      options: q.options,
+      correctAnswer: q.options[q.correctAnswer],
+      explanation: q.explanation || 'Generated via Assessment Engine.',
+      tags: [
+        generatedQuiz.metadata.focusMode || focusMode,
+        generatedQuiz.topic || topic || 'general',
+      ].filter(Boolean) as string[],
+      difficulty: q.difficulty,
+      createdAt: new Date(),
+    }));
+
+    QuizStore.createQuizFromSelection(
+      generatedQuiz.topic || topic || 'Generated Quiz',
+      `Generated via Assessment Engine • ${generatedQuiz.metadata.focusMode || focusMode}`,
+      mappedQuestions,
+      [generatedQuiz.topic || topic || 'assessment']
+    );
+
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
   };
@@ -409,7 +432,7 @@ const AIQuizCreator: React.FC = () => {
       {showToast && (
         <div className="fixed bottom-8 right-8 px-6 py-4 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-xl border border-zinc-800 dark:border-zinc-200 flex items-center gap-3 animate-fade-in">
           <span className="material-symbols-outlined text-green-400 dark:text-green-600">check_circle</span>
-          <span className="font-medium">Saved to Class Library</span>
+          <span className="font-medium">Saved to Quiz Library</span>
         </div>
       )}
     </div>

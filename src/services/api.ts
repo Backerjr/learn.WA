@@ -16,6 +16,8 @@ export interface EnglishClass {
   syllabus: string[];
   students: string[];
   enrolled: number;
+  enrolled_count?: number;
+  created_at?: string;
 }
 
 export interface CreateClassRequest {
@@ -82,6 +84,28 @@ async function apiCall<T>(
   }
 }
 
+function normalizeClassRecord(raw: any): EnglishClass {
+  const normalizeDays = (value: any) => {
+    if (Array.isArray(value)) return value;
+    if (typeof value === 'string') {
+      return value.split(',').map((d) => d.trim()).filter(Boolean);
+    }
+    return [];
+  };
+
+  const syllabus = raw.syllabus ?? [];
+  const students = raw.students ?? [];
+  const enrolled = raw.enrolled ?? raw.enrolled_count ?? 0;
+
+  return {
+    ...raw,
+    days: normalizeDays(raw.days),
+    syllabus,
+    students,
+    enrolled,
+  };
+}
+
 // API Functions
 
 /**
@@ -103,14 +127,16 @@ export async function getClasses(filters?: {
   if (filters?.teacher) params.append('teacher', filters.teacher);
   
   const query = params.toString();
-  return apiCall(`/classes${query ? `?${query}` : ''}`);
+  const response = await apiCall<EnglishClass[]>(`/classes${query ? `?${query}` : ''}`);
+  return response.map(normalizeClassRecord);
 }
 
 /**
  * Get a specific class by ID
  */
 export async function getClass(classId: number): Promise<EnglishClass> {
-  return apiCall(`/classes/${classId}`);
+  const response = await apiCall<EnglishClass>(`/classes/${classId}`);
+  return normalizeClassRecord(response);
 }
 
 /**

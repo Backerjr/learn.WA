@@ -8,57 +8,52 @@ export default {
   theme: {
     extend: {
       colors: {
-        // RozmoWA Editorial Palette
-        "primary": "#000000", // Black - Primary actions, editorial feel
-        "secondary": "#71717A", // Zinc-500 - Secondary text and elements
-        "background-light": "#FFFFFF", // Pure white
-        "background-dark": "#000000", // Pure black
-        "card-light": "#FAFAFA", // Zinc-50 - Subtle card backgrounds
-        "card-dark": "#18181B", // Zinc-900 - Dark mode cards
-        "text-light-primary": "#000000", // Black text
-        "text-light-secondary": "#71717A", // Zinc-500 - Secondary text
-        "text-dark-primary": "#FAFAFA", // Zinc-50 - Dark mode primary text
-        "text-dark-secondary": "#A1A1AA", // Zinc-400 - Dark mode secondary
-        "accent-green": "#000000", // Changed to black for consistency
-        "accent-orange": "#000000", // Changed to black for consistency
-        
-        // Holographic Palette for LandingPortal
-        'space-black': '#000000',
-        'neon-teal': '#00FFC6',
-        'holo-silver': '#E0E0E0',
-        
-        // Additional editorial colors
-        "zinc": {
-          50: "#FAFAFA",
-          100: "#F4F4F5",
-          200: "#E4E4E7",
-          300: "#D4D4D8",
-          400: "#A1A1AA",
-          500: "#71717A",
-          600: "#52525B",
-          700: "#3F3F46",
-          800: "#27272A",
-          900: "#18181B",
+        // Aurora Studio Palette
+        "primary": "#3555FF", // Cobalt action
+        "secondary": "#FF7E3D", // Ember accent for contrast
+        "background-light": "#0B1020",
+        "background-dark": "#050915",
+        "card-light": "#0F172A",
+        "card-dark": "#0B1220",
+        "light-primary": "#0B1020",
+        "light-secondary": "#475467",
+        "dark-primary": "#E9ECF5",
+        "dark-secondary": "#A3ADC2",
+        "accent-green": "#1CD1A1",
+        "accent-orange": "#F6AA1C",
+        "accent-sky": "#74C5F4",
+        'space-black': '#050915',
+        'neon-teal': '#4FD1C5',
+        'holo-silver': '#E9ECF5',
+        brand: {
+          50: '#eef2ff',
+          100: '#e0e7ff',
+          200: '#c7d2fe',
+          300: '#a5b4fc',
+          400: '#818cf8',
+          500: '#6366f1',
+          600: '#4f46e5',
+          700: '#4338ca',
+          800: '#3730a3',
+          900: '#312e81',
         },
       },
       fontFamily: {
-        // Editorial Typography
-        "display": ["Inter", "system-ui", "-apple-system", "sans-serif"], // Clean sans for UI
-        "heading": ["ui-serif", "Georgia", "Cambria", "Times New Roman", "serif"], // Serif for headings
-        "body": ["Inter", "system-ui", "-apple-system", "sans-serif"], // Sans for body
-        // Custom Fonts for LandingPortal
-        editorial: ['"Playfair Display"', 'Georgia', 'serif'], 
-        data: ['Inter', 'ui-sans-serif', 'system-ui'],
+        // Expressive Grotesk Typography
+        "display": ['"Space Grotesk"', "ui-sans-serif", "system-ui", "sans-serif"],
+        "heading": ['"Space Grotesk"', "ui-sans-serif", "system-ui", "sans-serif"],
+        "body": ['"Work Sans"', "ui-sans-serif", "system-ui", "sans-serif"],
+        editorial: ['"Space Grotesk"', 'Georgia', 'serif'], 
+        data: ['"Work Sans"', 'ui-sans-serif', 'system-ui'],
       },
       borderRadius: {
-        // Sharp, editorial feel
-        "DEFAULT": "2px", // Minimal radius
-        "sm": "2px",
-        "md": "2px",
-        "lg": "2px", // Override to 2px for Swiss design
-        "xl": "4px", // Slightly more for special cases
-        "2xl": "8px",
-        "full": "9999px" // Keep full for circles
+        "DEFAULT": "12px",
+        "sm": "8px",
+        "md": "12px",
+        "lg": "16px",
+        "xl": "20px",
+        "2xl": "28px",
+        "full": "9999px"
       },
       fontSize: {
         // Editorial type scale
