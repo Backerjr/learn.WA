@@ -4,7 +4,7 @@ import { quizQuestions, QuizQuestion } from '@/mocks/quizQuestions';
 const QuizScreen = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [showFeedback, setShowFeedback] = useState<null | 'correct' | 'incorrect'>(null);
+  const [showFeedback, setShowFeedback] = useState<null | 'correct' | 'incorrect' | 'skipped'>(null);
   const [score, setScore] = useState(0);
   const [answeredQuestions, setAnsweredQuestions] = useState<number[]>([]);
 
@@ -29,11 +29,8 @@ const QuizScreen = () => {
   };
 
   const skipQuestion = () => {
-    if (currentQuestionIndex < totalQuestions - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setSelectedOption(null);
-      setShowFeedback(null);
-    }
+    setSelectedOption(null);
+    setShowFeedback('skipped');
   };
 
   const nextQuestion = () => {
@@ -45,6 +42,9 @@ const QuizScreen = () => {
       alert(`Quiz completed! Your score: ${score}/${totalQuestions}`);
     }
   };
+
+  const nextLabel = currentQuestionIndex < totalQuestions - 1 ? 'Next Question' : 'Finish Quiz';
+  const nextEnabled = showFeedback !== null;
 
   return (
     <div className="font-display bg-background-light dark:bg-background-dark text-light-primary dark:text-dark-primary">
@@ -105,61 +105,59 @@ const QuizScreen = () => {
               </div>
             </div>
 
-            <footer className="mt-8 flex w-full flex-col-reverse items-center justify-between gap-4 sm:flex-row">
-              <button 
-                onClick={skipQuestion} 
-                className="font-bold text-light-secondary dark:text-dark-secondary transition-colors hover:text-primary"
-                disabled={showFeedback !== null}
-              >
-                Skip
-              </button>
-              <button 
-                onClick={checkAnswer} 
-                className="w-full rounded-full bg-primary px-8 py-4 text-lg font-bold text-white shadow-lg shadow-primary/30 transition-transform duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
-                disabled={!selectedOption || showFeedback !== null}
-              >
-                Check Answer
-              </button>
+            <footer className="mt-8 w-full space-y-3">
+              <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <button 
+                  onClick={skipQuestion} 
+                  className="font-bold text-light-secondary dark:text-dark-secondary transition-colors hover:text-primary disabled:opacity-50"
+                  disabled={showFeedback !== null}
+                >
+                  Skip for now
+                </button>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end w-full sm:w-auto">
+                  <button 
+                    onClick={checkAnswer} 
+                    className="w-full sm:w-auto rounded-full bg-primary px-8 py-3 text-sm font-bold text-white shadow-lg shadow-primary/30 transition-transform duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={!selectedOption || showFeedback !== null}
+                  >
+                    Check Answer
+                  </button>
+                  <button
+                    onClick={nextQuestion}
+                    className="w-full sm:w-auto rounded-full border-2 border-primary px-8 py-3 text-sm font-bold text-primary transition-transform duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={!nextEnabled}
+                  >
+                    {nextLabel}
+                  </button>
+                </div>
+              </div>
+              <p className="text-xs text-light-secondary dark:text-dark-secondary text-center sm:text-right">Check or skip to unlock the next question.</p>
             </footer>
           </main>
 
-          {showFeedback === 'correct' && (
-            <div className="fixed inset-x-0 bottom-0 w-full bg-accent-green/10 p-4 backdrop-blur-sm dark:bg-accent-green/20 sm:p-6 md:p-8">
-                <div className="mx-auto flex max-w-2xl flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <div className="flex items-center gap-2">
-                            <span className="material-symbols-outlined text-2xl font-bold text-accent-green">check_circle</span>
-                            <h2 className="font-heading text-2xl font-bold text-accent-green">Correct!</h2>
-                        </div>
-                        <p className="mt-1 text-light-primary dark:text-dark-primary">{question.explanation}</p>
-                    </div>
-                    <button 
-                      onClick={nextQuestion} 
-                      className="w-full flex-shrink-0 rounded-full bg-accent-green px-8 py-3 font-bold text-white transition-transform duration-200 hover:scale-105 sm:w-auto"
-                    >
-                      {currentQuestionIndex < totalQuestions - 1 ? 'Next' : 'Finish'}
-                    </button>
+          {showFeedback && (
+            <div className={`mt-6 rounded-xl border ${showFeedback === 'correct' ? 'border-accent-green/40 bg-accent-green/10' : showFeedback === 'incorrect' ? 'border-primary/40 bg-primary/10' : 'border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark'} p-5`}>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-start gap-3">
+                  <span className={`material-symbols-outlined text-2xl ${showFeedback === 'correct' ? 'text-accent-green' : showFeedback === 'incorrect' ? 'text-primary' : 'text-light-secondary dark:text-dark-secondary'}`}>
+                    {showFeedback === 'correct' ? 'check_circle' : showFeedback === 'incorrect' ? 'cancel' : 'arrow_forward'}
+                  </span>
+                  <div>
+                    <h2 className="font-heading text-xl font-bold text-light-primary dark:text-dark-primary">
+                      {showFeedback === 'correct' ? 'Correct' : showFeedback === 'incorrect' ? 'Nice try' : 'Skipped'}
+                    </h2>
+                    <p className="text-sm text-light-secondary dark:text-dark-secondary">
+                      {showFeedback === 'skipped' ? 'No score change. Use Next to keep moving.' : question.explanation}
+                    </p>
+                  </div>
                 </div>
-            </div>
-          )}
-
-          {showFeedback === 'incorrect' && (
-             <div className="fixed inset-x-0 bottom-0 w-full bg-primary/10 p-4 backdrop-blur-sm dark:bg-primary/20 sm:p-6 md:p-8">
-                <div className="mx-auto flex max-w-2xl flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <div className="flex items-center gap-2">
-                            <span className="material-symbols-outlined text-2xl font-bold text-primary">cancel</span>
-                            <h2 className="font-heading text-2xl font-bold text-primary">Nice try!</h2>
-                        </div>
-                        <p className="mt-1 text-light-primary dark:text-dark-primary">{question.explanation}</p>
-                    </div>
-                    <button 
-                      onClick={nextQuestion} 
-                      className="w-full flex-shrink-0 rounded-full bg-primary px-8 py-3 font-bold text-white transition-transform duration-200 hover:scale-105 sm:w-auto"
-                    >
-                      {currentQuestionIndex < totalQuestions - 1 ? 'Next' : 'Finish'}
-                    </button>
-                </div>
+                <button
+                  onClick={nextQuestion}
+                  className="w-full sm:w-auto rounded-full bg-primary px-6 py-3 text-sm font-bold text-white transition-transform duration-200 hover:scale-105"
+                >
+                  {nextLabel}
+                </button>
+              </div>
             </div>
           )}
         </div>

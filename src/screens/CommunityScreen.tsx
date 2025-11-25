@@ -17,7 +17,7 @@ const CommunityScreen = () => {
                             Connect with fellow learners, share your progress, and participate in language challenges.
                         </p>
                     </div>
-                    <Link to="/" className="flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors mt-4">
+                    <Link to="/dashboard" className="flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors mt-4">
                         <span className="material-symbols-outlined">arrow_back</span>
                         Back to Dashboard
                     </Link>

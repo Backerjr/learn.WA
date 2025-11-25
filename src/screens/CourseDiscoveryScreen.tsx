@@ -36,7 +36,7 @@ const CourseDiscoveryScreen = () => {
                         <h2 className="font-heading text-xl font-bold text-brand-dark-gray">Structured Fun English</h2>
                     </div>
                     <div className="hidden items-center gap-8 md:flex">
-                        <Link to="/" className="text-sm font-medium text-brand-dark-gray transition-colors hover:text-brand-teal">Dashboard</Link>
+                        <Link to="/dashboard" className="text-sm font-medium text-brand-dark-gray transition-colors hover:text-brand-teal">Dashboard</Link>
                         <Link to="/profile" className="text-sm font-medium text-brand-dark-gray transition-colors hover:text-brand-teal">Profile</Link>
                         <Link to="/profile" className="text-sm font-medium text-brand-dark-gray transition-colors hover:text-brand-teal">Settings</Link>
                     </div>

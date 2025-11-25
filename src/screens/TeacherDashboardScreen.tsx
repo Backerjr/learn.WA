@@ -51,7 +51,7 @@ const TeacherDashboardScreen = () => {
                                 <h1 className="font-heading text-xl font-bold">LingoQuest</h1>
                             </div>
                             <div className="flex flex-col gap-1">
-                                <Link to="/" className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-primary/10 dark:hover:bg-primary/20">
+                                <Link to="/dashboard" className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-primary/10 dark:hover:bg-primary/20">
                                     <span className="material-symbols-outlined">dashboard</span>
                                     <p className="text-sm font-medium">Mission Control</p>
                                 </Link>

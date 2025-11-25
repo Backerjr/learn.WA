@@ -73,7 +73,7 @@ const CoreLearningScreen = () => {
                         {/* Minimal Header */}
                         <header className="flex items-center justify-between px-10 py-4 border-b border-gray-200 dark:border-gray-700">
                             <h1 className="font-heading text-xl font-bold text-light-primary dark:text-dark-primary">Unit 5: Mastering Business Idioms</h1>
-                            <Link to="/" className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <Link to="/dashboard" className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
                                 <span className="material-symbols-outlined text-xl">arrow_back</span>
                                 Back to Dashboard
                             </Link>

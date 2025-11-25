@@ -98,7 +98,7 @@ const AssessmentStudio: React.FC = () => {
       <header className="border-b border-zinc-200 dark:border-zinc-800">
         <div className="max-w-[1800px] mx-auto px-8 py-6">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2 text-light-primary dark:text-dark-primary hover:opacity-70 transition-opacity">
+            <Link to="/dashboard" className="flex items-center gap-2 text-light-primary dark:text-dark-primary hover:opacity-70 transition-opacity">
               <span className="material-symbols-outlined">arrow_back</span>
               <span className="text-sm font-medium">Mission Control</span>
             </Link>

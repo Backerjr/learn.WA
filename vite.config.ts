@@ -10,6 +10,16 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
+    chunkSizeWarningLimit: 1200,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'three-bundle': ['three', '@react-three/fiber', '@react-three/drei'],
+          'framer-motion': ['framer-motion'],
+        },
+      },
+    },
   },
   resolve: {
     alias: {

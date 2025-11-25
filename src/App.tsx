@@ -1,21 +1,20 @@
+import { Suspense, lazy } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { LearningContext } from './contexts/LearningContext';
 
-// Import NEW Screens
-import LandingPortal from './screens/LandingPortal';
-
-// Import EXISTING Screens (now accessed via new paths/dashboard)
-import MissionControlScreen from './screens/MissionControlScreen';
-import QuizScreen from './screens/QuizScreen';
-import CoreLearningScreen from './screens/CoreLearningScreen';
-import UserProfileScreen from './screens/UserProfileScreen';
-import CourseDiscoveryScreen from './screens/CourseDiscoveryScreen';
-import ResourceLibraryScreen from './screens/ResourceLibraryScreen';
-import AIQuizCreatorScreen from './screens/AIQuizCreator';
-
-// Placeholder Screens (to prevent crashes on missing links)
-const TeacherDashboardScreen = () => <div className="p-10 text-white bg-space-black h-screen font-data">Teacher Mode Dashboard - Building the Constellation Map...</div>;
+// Lazy-loaded Screens
+const LandingPortal = lazy(() => import('./screens/LandingPortal'));
+const MissionControlScreen = lazy(() => import('./screens/MissionControlScreen'));
+const QuizScreen = lazy(() => import('./screens/QuizScreen'));
+const CoreLearningScreen = lazy(() => import('./screens/CoreLearningScreen'));
+const UserProfileScreen = lazy(() => import('./screens/UserProfileScreen'));
+const CourseDiscoveryScreen = lazy(() => import('./screens/CourseDiscoveryScreen'));
+const ResourceLibraryScreen = lazy(() => import('./screens/ResourceLibraryScreen'));
+const AIQuizCreatorScreen = lazy(() => import('./screens/AIQuizCreator'));
+const AssessmentStudio = lazy(() => import('./screens/AssessmentStudio'));
+const QuizLibrary = lazy(() => import('./screens/QuizLibrary'));
+const TeacherDashboardScreen = lazy(() => import('./screens/TeacherDashboardScreen'));
 const CommunityScreen = () => <div className="p-10 text-white bg-space-black h-screen font-data">Community - Building the Galactic Network...</div>;
 
 
@@ -27,24 +26,28 @@ function App() {
       <LearningContext>
         <div className="dark">
           <Router>
-            <Routes>
-              {/* PHASE 4: NEW LANDING PAGE */}
-              <Route path="/" element={<LandingPortal />} />
-              
-              {/* EXISTING SCREENS (now under /dashboard or specific routes) */}
-              <Route path="/dashboard" element={<MissionControlScreen />} />
-              <Route path="/learn" element={<CoreLearningScreen />} />
-              <Route path="/courses" element={<CourseDiscoveryScreen />} />
-              <Route path="/profile" element={<UserProfileScreen />} />
-              <Route path="/library" element={<ResourceLibraryScreen />} />
-              <Route path="/studio" element={<AIQuizCreatorScreen />} />
-              
-              {/* NAVIGATION FIXES */}
-              <Route path="/quiz" element={<QuizScreen />} />
-              <Route path="/teacher" element={<TeacherDashboardScreen />} />
-              <Route path="/community" element={<CommunityScreen />} />
+            <Suspense fallback={<div className="p-10 text-white bg-space-black h-screen font-data">Loading...</div>}>
+              <Routes>
+                {/* PHASE 4: NEW LANDING PAGE */}
+                <Route path="/" element={<LandingPortal />} />
+                
+                {/* EXISTING SCREENS (now under /dashboard or specific routes) */}
+                <Route path="/dashboard" element={<MissionControlScreen />} />
+                <Route path="/learn" element={<CoreLearningScreen />} />
+                <Route path="/courses" element={<CourseDiscoveryScreen />} />
+                <Route path="/profile" element={<UserProfileScreen />} />
+                <Route path="/library" element={<ResourceLibraryScreen />} />
+                <Route path="/quiz-library" element={<QuizLibrary />} />
+                <Route path="/studio" element={<AIQuizCreatorScreen />} />
+                
+                {/* NAVIGATION FIXES */}
+                <Route path="/quiz" element={<QuizScreen />} />
+                <Route path="/teacher" element={<TeacherDashboardScreen />} />
+                <Route path="/teacher/create" element={<AssessmentStudio />} />
+                <Route path="/community" element={<CommunityScreen />} />
 
-            </Routes>
+              </Routes>
+            </Suspense>
           </Router>
         </div>
       </LearningContext>
