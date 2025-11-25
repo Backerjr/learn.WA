@@ -1,7 +1,14 @@
 // API Client for Learn.WA Backend
 // Provides typed functions for all REST endpoints
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const rawBase = import.meta.env.VITE_API_URL || '/api';
+const API_BASE_URL = rawBase.endsWith('/api') ? rawBase : `${rawBase.replace(/\/$/, '')}/api`;
+
+function buildUrl(endpoint: string) {
+  const base = API_BASE_URL.replace(/\/$/, '');
+  const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  return `${base}${path}`;
+}
 
 // Types
 export interface EnglishClass {
@@ -46,7 +53,7 @@ async function apiCall<T>(
   options?: RequestInit
 ): Promise<T> {
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetch(buildUrl(endpoint), {
       headers: {
         'Content-Type': 'application/json',
         ...options?.headers,
@@ -63,8 +70,9 @@ async function apiCall<T>(
     const contentType = response.headers.get('content-type') || '';
     const rawBody = await response.text();
     const isJson = contentType.includes('application/json');
+    const looksLikeJson = rawBody.trim().startsWith('{') || rawBody.trim().startsWith('[');
 
-    if (!isJson) {
+    if (!isJson && !looksLikeJson) {
       console.error(`API returned non-JSON response (${response.status}):`, rawBody.substring(0, 200));
       throw new Error(`API Error: ${response.status} - Unexpected response format`);
     }
@@ -127,16 +135,20 @@ export async function getClasses(filters?: {
   if (filters?.teacher) params.append('teacher', filters.teacher);
   
   const query = params.toString();
-  const response = await apiCall<EnglishClass[]>(`/classes${query ? `?${query}` : ''}`);
-  return response.map(normalizeClassRecord);
+  const response = await apiCall<any>(`/classes${query ? `?${query}` : ''}`);
+  const list = Array.isArray(response) ? response : response?.classes || [];
+  const normalized = list.map(normalizeClassRecord);
+  console.log('Courses payload (normalized):', normalized);
+  return normalized;
 }
 
 /**
  * Get a specific class by ID
  */
 export async function getClass(classId: number): Promise<EnglishClass> {
-  const response = await apiCall<EnglishClass>(`/classes/${classId}`);
-  return normalizeClassRecord(response);
+  const response = await apiCall<any>(`/classes/${classId}`);
+  const payload = response?.class || response;
+  return normalizeClassRecord(payload);
 }
 
 /**
