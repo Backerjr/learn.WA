@@ -38,7 +38,10 @@ export const [LearningContext, useLearning] = createContextHook(() => {
               unlockedAt: a.unlockedAt ? new Date(a.unlockedAt) : undefined,
             })),
           },
-          lessons: parsed.lessons,
+          lessons: parsed.lessons.map((lesson: any) => ({
+            ...lesson,
+            lastAccessed: lesson.lastAccessed ? new Date(lesson.lastAccessed) : undefined,
+          })),
         };
       }
       return { userProfile: mockUserProfile, lessons: mockLessons };
