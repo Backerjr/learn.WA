@@ -1,5 +1,8 @@
 // Learning types for the application
 
+export type LessonEnrollmentStatus = "not_enrolled" | "trial" | "active" | "completed" | "payment_failed";
+export type LessonPaymentStatus = "paid" | "refunded" | "pending" | "failed";
+
 export interface Lesson {
   id: string;
   title: string;
@@ -9,6 +12,11 @@ export interface Lesson {
   progress: number; // 0-100
   completed: boolean;
   category: string;
+  enrollmentStatus?: LessonEnrollmentStatus;
+  price?: number;
+  currency?: string;
+  paymentStatus?: LessonPaymentStatus;
+  lastAccessed?: Date;
 }
 
 export interface Achievement {
