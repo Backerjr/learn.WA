@@ -9,6 +9,29 @@
 export type FocusMode = 'vocab' | 'grammar' | 'comprehension';
 export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
 
+export interface AISuggestedAction {
+  label: string;
+  description?: string;
+  href?: string;
+}
+
+export interface AIResponse<T = unknown> {
+  content: T;
+  confidence: number;
+  suggested_actions: AISuggestedAction[];
+}
+
+export interface MockAIConfig {
+  minDelayMs?: number;
+  maxDelayMs?: number;
+  fixedDelayMs?: number;
+  errorRate?: number;
+  forceError?: boolean;
+  confidence?: number;
+  suggestedActions?: AISuggestedAction[];
+  random?: () => number;
+}
+
 export interface Question {
   id: string;
   text: string;
@@ -39,6 +62,14 @@ export interface GeneratedQuiz {
     sourceText?: string;
     focusMode?: FocusMode;
   };
+}
+
+export interface GenerateQuizOptions {
+  topic?: string;
+  sourceText?: string;
+  focusMode?: FocusMode;
+  difficulty?: DifficultyLevel;
+  questionCount?: number;
 }
 
 /**
@@ -252,6 +283,60 @@ const QUESTION_BANKS: Record<string, QuizQuestion[]> = {
       difficulty: 'advanced'
     }
   ]
+};
+
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+const DEFAULT_SUGGESTED_ACTIONS: AISuggestedAction[] = [
+  {
+    label: 'Regenerate',
+    description: 'Try a fresh version of the request with tweaks to the prompt'
+  },
+  {
+    label: 'Tighten focus',
+    description: 'Adjust the focus mode or difficulty for a sharper result'
+  },
+  {
+    label: 'Save to library',
+    description: 'Store the generated content for reuse across lessons'
+  }
+];
+
+export const mockAIService = async <T>(
+  producer: () => Promise<T> | T,
+  config: MockAIConfig = {}
+): Promise<AIResponse<T>> => {
+  const {
+    minDelayMs = 500,
+    maxDelayMs = 1500,
+    fixedDelayMs,
+    errorRate = 0.05,
+    forceError = false,
+    confidence,
+    suggestedActions,
+    random = Math.random
+  } = config;
+
+  const boundedMin = Math.max(0, minDelayMs);
+  const boundedMax = Math.max(boundedMin, maxDelayMs);
+  const delay = fixedDelayMs ?? Math.round(boundedMin + (boundedMax - boundedMin) * random());
+  await sleep(delay);
+
+  const shouldError = forceError || random() < errorRate;
+  if (shouldError) {
+    throw new Error('Mock AI service error: simulated transient failure');
+  }
+
+  const content = await Promise.resolve(producer());
+  const computedConfidence = typeof confidence === 'number'
+    ? Math.min(1, Math.max(0, confidence))
+    : Math.min(0.95, Math.max(0.6, 0.65 + random() * 0.3));
+
+  return {
+    content,
+    confidence: Number(computedConfidence.toFixed(2)),
+    suggested_actions: suggestedActions ?? DEFAULT_SUGGESTED_ACTIONS
+  };
 };
 
 /**
@@ -527,20 +612,7 @@ const generateGenericQuestions = (topic: string, difficulty: DifficultyLevel, co
   return genericPool.slice(0, count).map((q, idx) => ({ ...q, id: String(idx + 1) }));
 };
 
-/**
- * Context-Aware Quiz Generation
- * Accepts source text and focus mode for intelligent assessment creation
- * 
- * @param options - Configuration object
- * @returns Promise<GeneratedQuiz> - Context-aware generated quiz
- */
-export const generateQuiz = async (options: {
-  topic?: string;
-  sourceText?: string;
-  focusMode?: FocusMode;
-  difficulty?: DifficultyLevel;
-  questionCount?: number;
-}): Promise<GeneratedQuiz> => {
+const buildQuiz = (options: GenerateQuizOptions): GeneratedQuiz => {
   const {
     topic = 'English Language',
     sourceText,
@@ -549,18 +621,13 @@ export const generateQuiz = async (options: {
     questionCount = 5
   } = options;
 
-  // Simulate AI thinking time (2 seconds for realistic feel)
-  await new Promise(resolve => setTimeout(resolve, 2000));
-
   let questions: QuizQuestion[];
   const normalizedTopic = topic.toLowerCase().trim();
-  
-  // If source text is provided with focus mode, generate context-aware questions
+
   if ((sourceText && sourceText.trim().length > 20) || focusMode) {
     questions = generateContextAwareQuestions(sourceText, focusMode, difficulty, questionCount);
   } else {
-    // Check topic-based question banks
-    const matchedKey = Object.keys(QUESTION_BANKS).find(key => 
+    const matchedKey = Object.keys(QUESTION_BANKS).find(key =>
       normalizedTopic.includes(key) || key.includes(normalizedTopic)
     );
 
@@ -585,6 +652,50 @@ export const generateQuiz = async (options: {
     }
   };
 };
+
+const buildQuizSuggestedActions = (topic?: string, focusMode?: FocusMode): AISuggestedAction[] => [
+  {
+    label: 'Refine topic',
+    description: `Narrow or broaden the topic${topic ? ` for ${topic}` : ''} to adjust coverage`
+  },
+  {
+    label: 'Adjust focus',
+    description: `Switch focus mode${focusMode ? ` from ${focusMode}` : ''} to diversify questions`
+  },
+  {
+    label: 'Tweak difficulty',
+    description: 'Regenerate with easier or harder prompts to match learners'
+  }
+];
+
+const requestQuizWithMockService = (
+  options: GenerateQuizOptions,
+  mockConfig?: MockAIConfig
+): Promise<AIResponse<GeneratedQuiz>> =>
+  mockAIService(() => buildQuiz(options), {
+    ...mockConfig,
+    suggestedActions: mockConfig?.suggestedActions ?? buildQuizSuggestedActions(options.topic, options.focusMode)
+  });
+
+/**
+ * Context-Aware Quiz Generation
+ * Accepts source text and focus mode for intelligent assessment creation
+ *
+ * @param options - Configuration object
+ * @returns Promise<GeneratedQuiz> - Context-aware generated quiz
+ */
+export const generateQuiz = async (
+  options: GenerateQuizOptions,
+  mockConfig?: MockAIConfig
+): Promise<GeneratedQuiz> => {
+  const response = await requestQuizWithMockService(options, mockConfig);
+  return response.content;
+};
+
+export const generateQuizAIResponse = (
+  options: GenerateQuizOptions,
+  mockConfig?: MockAIConfig
+): Promise<AIResponse<GeneratedQuiz>> => requestQuizWithMockService(options, mockConfig);
 
 /**
  * Validate quiz generation input
