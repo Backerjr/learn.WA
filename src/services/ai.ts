@@ -914,7 +914,7 @@ const generateMockFlashcardsFromInput = (text: string): Flashcard[] => {
 export const generateFlashcardsFromText = async (text: string): Promise<AIFlashcardResponse> => {
   // Reject immediately if input is empty
   if (!text || text.trim().length === 0) {
-    return Promise.reject(new Error('Input text cannot be empty. Please provide text to generate flashcards.'));
+    throw new Error('Input text cannot be empty. Please provide text to generate flashcards.');
   }
   
   // Simulate latency between 1.5s and 3s
@@ -939,7 +939,7 @@ export const generateFlashcardsFromText = async (text: string): Promise<AIFlashc
 export const grammarCheck = async (text: string): Promise<GrammarCheckResult> => {
   // Reject immediately if input is empty
   if (!text || text.trim().length === 0) {
-    return Promise.reject(new Error('Input text cannot be empty. Please provide text to check grammar.'));
+    throw new Error('Input text cannot be empty. Please provide text to check grammar.');
   }
   
   // Simulate latency between 1.5s and 3s
