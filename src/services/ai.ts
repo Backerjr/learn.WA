@@ -842,3 +842,132 @@ export const generateMockBatch = (topic: string, count: number): Question[] => {
   
   return questions;
 };
+
+/**
+ * Flashcard Types and AI Generation Service
+ * Magic Generator for creating flashcards from text input
+ */
+
+export interface Flashcard {
+  front: string;
+  back: string;
+  category: string;
+}
+
+export type AIFlashcardResponse = Flashcard[];
+
+export interface GrammarCheckResult {
+  isCorrect: boolean;
+  suggestions: string[];
+  correctedText?: string;
+}
+
+/**
+ * Mock flashcard data derived from input text
+ */
+const generateMockFlashcardsFromInput = (text: string): Flashcard[] => {
+  // Always include the required first card
+  const cards: Flashcard[] = [
+    { front: "Boarding Pass", back: "Karta pokładowa", category: "Travel" }
+  ];
+  
+  // Extract words from input to create additional cards
+  const words = text.split(/\s+/).filter(word => word.length > 3);
+  const uniqueWords = [...new Set(words)].slice(0, 4);
+  
+  const categories = ["Travel", "Vocabulary", "Phrases", "Expressions", "Daily Life"];
+  const mockTranslations: Record<string, string> = {
+    "airport": "Lotnisko",
+    "hotel": "Hotel",
+    "restaurant": "Restauracja",
+    "train": "Pociąg",
+    "ticket": "Bilet",
+    "passport": "Paszport",
+    "luggage": "Bagaż",
+    "flight": "Lot",
+    "default": "Tłumaczenie"
+  };
+  
+  uniqueWords.forEach((word, index) => {
+    const cleanWord = word.replace(/[^a-zA-Z]/g, '');
+    if (cleanWord.length > 2) {
+      cards.push({
+        front: cleanWord.charAt(0).toUpperCase() + cleanWord.slice(1).toLowerCase(),
+        back: mockTranslations[cleanWord.toLowerCase()] || `${mockTranslations.default} (${cleanWord})`,
+        category: categories[index % categories.length]
+      });
+    }
+  });
+  
+  return cards.slice(0, 5); // Max 5 cards as per requirements
+};
+
+/**
+ * Generate flashcards from text using mock AI service
+ * Simulates latency between 1.5s and 3s
+ * Randomly throws errors to simulate network/AI failures
+ * Rejects immediately if input is empty
+ * 
+ * @param text - The input text to generate flashcards from
+ * @returns Promise<AIFlashcardResponse> - Array of generated flashcards
+ */
+export const generateFlashcardsFromText = async (text: string): Promise<AIFlashcardResponse> => {
+  // Reject immediately if input is empty
+  if (!text || text.trim().length === 0) {
+    return Promise.reject(new Error('Input text cannot be empty. Please provide text to generate flashcards.'));
+  }
+  
+  // Simulate latency between 1.5s and 3s
+  const delay = 1500 + Math.random() * 1500;
+  await sleep(delay);
+  
+  // Randomly throw an error (about 10% of the time)
+  if (Math.random() < 0.1) {
+    throw new Error('AI service temporarily unavailable. Please try again.');
+  }
+  
+  return generateMockFlashcardsFromInput(text);
+};
+
+/**
+ * Grammar check function for text input
+ * Simulates latency and occasional failures
+ * 
+ * @param text - The text to check for grammar
+ * @returns Promise<GrammarCheckResult> - Grammar check results
+ */
+export const grammarCheck = async (text: string): Promise<GrammarCheckResult> => {
+  // Reject immediately if input is empty
+  if (!text || text.trim().length === 0) {
+    return Promise.reject(new Error('Input text cannot be empty. Please provide text to check grammar.'));
+  }
+  
+  // Simulate latency between 1.5s and 3s
+  const delay = 1500 + Math.random() * 1500;
+  await sleep(delay);
+  
+  // Randomly throw an error (about 10% of the time)
+  if (Math.random() < 0.1) {
+    throw new Error('Grammar check service temporarily unavailable. Please try again.');
+  }
+  
+  // Mock grammar check result
+  const hasErrors = Math.random() < 0.3;
+  return {
+    isCorrect: !hasErrors,
+    suggestions: hasErrors 
+      ? ['Consider using active voice', 'Check subject-verb agreement'] 
+      : [],
+    correctedText: hasErrors ? text.trim() + ' (corrected)' : undefined
+  };
+};
+
+/**
+ * Default export: AIService with all flashcard functions
+ */
+const AIService = {
+  generateFlashcardsFromText,
+  grammarCheck
+};
+
+export default AIService;
