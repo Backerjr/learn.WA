@@ -15,6 +15,7 @@ const AIQuizCreatorScreen = lazy(() => import('./screens/AIQuizCreator'));
 const AssessmentStudio = lazy(() => import('./screens/AssessmentStudio'));
 const QuizLibrary = lazy(() => import('./screens/QuizLibrary'));
 const TeacherDashboardScreen = lazy(() => import('./screens/TeacherDashboardScreen'));
+const FlashcardUploader = lazy(() => import('./screens/FlashcardUploader'));
 const CommunityScreen = () => <div className="p-10 text-white bg-space-black h-screen font-data">Community - Building the Galactic Network...</div>;
 
 
@@ -45,6 +46,7 @@ function App() {
                 <Route path="/teacher" element={<TeacherDashboardScreen />} />
                 <Route path="/teacher/create" element={<AssessmentStudio />} />
                 <Route path="/community" element={<CommunityScreen />} />
+                <Route path="/flashcard-uploader" element={<FlashcardUploader />} />
 
               </Routes>
             </Suspense>
